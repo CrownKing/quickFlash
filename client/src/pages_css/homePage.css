@@ -1,0 +1,37 @@
+.deckDiv{
+    height: 25%;
+    display: flex;
+}
+.deckPhoto{
+    height: 80%;
+    width: 40%;
+    border-radius: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.deckPhoto div{
+    height: 80%;
+    width: 80%;
+    display: flex;
+    background-color: #C9CBCD;
+}
+.deckName{
+    align-items: center;
+    width: 60%;
+    height: 80%;
+    display: flex;
+    justify-content: center;
+}
+.deckName div{
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+    height: 20%;
+    background-color: #C9CBCD;
+}
+.deckName div span{
+    padding-left: 15px;
+}

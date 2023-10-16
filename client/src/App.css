@@ -1,0 +1,63 @@
+.App{
+  height: 100vh;
+  background-color: #DDE9F0;
+}
+.logo{
+  display: flex;
+  height: 25%;
+  justify-content: center;
+
+}
+.inputs{
+  display: grid;
+    margin: 48px;
+}
+.inputs input{
+  margin: 0px;
+  border: none;
+  background-color: #8AC26D;
+  border-radius: 25px;
+  height: 7vh;
+  width: 100%;
+}
+.input1{
+  height: 15vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.input2{
+  height: 15vh;
+  display: block;
+  align-items: start;
+  justify-content: center;
+}
+.create{
+  justify-content: start;
+  display: flex;
+  padding-left: 5vh;
+  padding-top:5vh;
+}
+.create span{
+  color: #2BBFFF;
+  font-weight: bold;
+}
+.buttonDiv{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 15vh;
+}
+.buttonDiv button{
+  background-color: #8AC26D;
+    height: 50%;
+    width: 10vh;
+    border: none;
+    border-radius: 20px;
+}
+#inputId::placeholder {
+  color: #000000;
+  font-size: 30px;
+  padding-left: 30px;
+  opacity: 1;
+}

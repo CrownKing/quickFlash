@@ -1,0 +1,20 @@
+.navBackGround{
+    background-color: #8AC26D;
+    height: 8vh;
+    position:absolute;
+    left:0;
+    bottom:0;
+    right:0;
+    display: flex;
+    justify-content: space-evenly;
+}
+.navBackGround div{
+    width: 25%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card{
+    scale: 0.1;
+}

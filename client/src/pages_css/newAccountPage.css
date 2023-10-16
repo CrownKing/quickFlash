@@ -1,0 +1,44 @@
+.contaPage{
+    height: 100vh;
+    background-color: #8AC26D;
+}
+.inputsDiv{
+    height: 40%;
+    display: grid;
+    margin: 30px;
+}
+
+.inputsDiv input{
+    background-color: #DDE9F0 !important;
+    margin: 0px;
+    border: none;
+    border-radius: 25px;
+    height: 7vh;
+    width: 100%;
+  }
+
+  .buttons{
+    display: flex;
+    justify-content: space-around;
+    height: 5%;
+  }
+  .buttons button{
+    width: 20%;
+    height: 100%;
+    border: none;
+    border-radius: 20px;
+  }
+  #inputCriarConta::placeholder {
+    color: #000000;
+    font-size: 20px;
+    padding-left: 30px;
+    opacity: 1;
+  }
+  input[type="text"]{
+    font-size:20px;
+    padding-left: 15px;
+  }
+  input[type="password"]{
+    font-size:20px;
+    padding-left: 15px;
+  }

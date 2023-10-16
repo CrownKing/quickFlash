@@ -1,0 +1,36 @@
+.allCardDiv{
+    height: 92vh;
+    width: 100%;
+}
+.cardsDiv{
+    height: 70%;
+    width: 100%;
+    justify-content: center;
+    display: flex;
+}
+.cardsDivContent{
+    height: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 80%;
+    display: flex;
+    justify-content: space-between;
+}
+.cardsDivContent div{
+    width: 20%;
+    height: 20%;
+    margin: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.cardsDivContent div img{
+    max-width: 100%;
+    height: auto;
+}
+.cardsDivContent span{
+    font-size: 12px;
+    margin: 5px;
+    white-space: nowrap;
+}
