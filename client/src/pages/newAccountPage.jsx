@@ -13,7 +13,7 @@ function NewAccountPage() {
   const [usuarioSenha, setusuarioSenha] = useState('')
   const [usuarioNome, setusuarioNome] = useState('')
   const [usuarioConfirmaSenha, setusuarioConfirmaSenha] = useState('')
-
+  
 const createCadastro = () => {
 if(usuarioSenha === usuarioConfirmaSenha){
  Axios.post('http://localhost:3001/user', {usuarioNome: usuarioNome, usuarioEmail: usuarioEmail , usuarioSenha: usuarioSenha}).then(()=>{
@@ -41,6 +41,7 @@ else
             </Link>
             </button>
             <button onClick={createCadastro}>
+            <Link to=""></Link>
             <FontAwesomeIcon icon = {faRightToBracket} size='2x'></FontAwesomeIcon>
             </button>
         </div>

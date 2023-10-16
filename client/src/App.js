@@ -16,9 +16,17 @@ function App() {
     })
    },[])
 
-const createCadastro = () => {
-  Axios.post('http://localhost:3001/user', {usuarioNome:'John Jhon', usuarioEmail: usuarioEmail , usuarioSenha: usuarioSenha}).then(()=>{
-    alert('deu bom')
+
+const verifyEmaileSenha = () => {
+  Axios.get('http://localhost:3001/api/user/email').then((response)=>{
+    debugger
+    const usuario = response.data.filter(x => x.email === usuarioEmail)
+    if(usuario === null || usuario === undefined || usuario.length == 0){
+      alert("Email ou senha inválidos")
+    }
+    if(usuario[0].senha !== usuarioSenha){
+      alert("Email ou senha inválidos")
+    }
   })
  }
   return (
@@ -42,7 +50,7 @@ const createCadastro = () => {
         
       </div>
       <div className='buttonDiv'>
-        <button>
+        <button onClick={verifyEmaileSenha}>
         <Link to="/home"><FontAwesomeIcon icon = {faRightToBracket} size='2x'></FontAwesomeIcon></Link>
         </button>
       </div>
