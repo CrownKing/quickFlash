@@ -3,12 +3,14 @@ import logo from './loginLogo.png';
 import './App.css';
 import {FontAwesomeIcon} from'@fortawesome/react-fontawesome'
 import {faRightToBracket} from '@fortawesome/free-solid-svg-icons'
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import Axios  from "axios"
 
 function App() {
    const [usuarioEmail, setusuarioEmail] = useState('')
    const [usuarioSenha, setusuarioSenha] = useState('')
+   const [IfRedirect, setRedirect] = useState(false)
+   const navigate = useNavigate();
 
    useEffect(()=>{
     Axios.get('http://localhost:3001/api/user/email').then((response)=>{
@@ -19,15 +21,25 @@ function App() {
 
 const verifyEmaileSenha = () => {
   Axios.get('http://localhost:3001/api/user/email').then((response)=>{
-    debugger
     const usuario = response.data.filter(x => x.email === usuarioEmail)
-    if(usuario === null || usuario === undefined || usuario.length == 0){
+    if(usuario === null || usuario === undefined || usuario.length === 0){
       alert("Email ou senha inválidos")
     }
     if(usuario[0].senha !== usuarioSenha){
       alert("Email ou senha inválidos")
     }
+    else if(usuario[0].senha === usuarioSenha){
+      localStorage.setItem("loginData",JSON.stringify(usuario));
+      setRedirect(true)
+    }
+    handleRedirect()
   })
+ }
+
+ const handleRedirect = () =>{
+  if (IfRedirect){
+    navigate('/home')
+  }
  }
   return (
     <div className="App">
@@ -51,7 +63,7 @@ const verifyEmaileSenha = () => {
       </div>
       <div className='buttonDiv'>
         <button onClick={verifyEmaileSenha}>
-        <Link to="/home"><FontAwesomeIcon icon = {faRightToBracket} size='2x'></FontAwesomeIcon></Link>
+        <FontAwesomeIcon icon = {faRightToBracket} size='2x'></FontAwesomeIcon>
         </button>
       </div>
     </div>
