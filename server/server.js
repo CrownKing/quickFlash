@@ -15,15 +15,17 @@ app.use(bodyParser.urlencoded({extended : true}))
 app.use(express.json())
 app.use(cors())
 
-app.get("/", (req, res) =>{
-debugger
-    const sqlInsert = "SELECT * FROM usuario"
-    db.query(sqlInsert, [] , (err,result)=>{
+app.post("/api/baralhos", (req, res) =>{
+    console.log(req.body)
+    const criadorId = req.body.criadorId
+    console.log(criadorId)
+    const sqlSelectBaralho = "SELECT * FROM baralho WHERE criadorId = ?;"
+    db.query(sqlSelectBaralho, criadorId , (err,result)=>{
         if(err) {
             console.log(err);
             res.send(err.toString()); 
          }
-         res.send("change done");
+         res.send(result);
     })
 })
 
@@ -43,6 +45,14 @@ app.get("/api/user/email",(req,res)=>{
     })
 })
 
+app.post("/api/cards", (req, res)=>{
+    const baralhoId = req.body.baralhoId
+    const sqlSelectCards = "SELECT * FROM flashcard where baralhoId = ?;"
+    db.query(sqlSelectCards,[baralhoId],(err, result) =>{
+        res.send(result)
+    })
+
+})
 
 app.listen(3001, () =>{
 

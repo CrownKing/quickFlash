@@ -3,7 +3,7 @@ import '../components_css/deckSpace.css'
 import deckPhoto from '../icons/deckBox.png'
 
 
-function DeckSpace() {
+function DeckSpace({baralhoNome}) {
   return (
     <div className='deckDiv'>
     <div className='deckPhoto'>
@@ -12,7 +12,7 @@ function DeckSpace() {
       </div>
     </div>
     <div className='deckName'>
-        <div><span> Prova 1 de Gradi</span></div>
+        <div><span> {baralhoNome}</span></div>
       </div>
   </div>
   )
