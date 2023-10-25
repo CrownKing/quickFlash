@@ -3,21 +3,34 @@
     width: 100%;
 }
 .cardsDiv{
-    height: 70%;
-    width: 100%;
-    justify-content: center;
     display: flex;
+    flex-wrap: wrap;
+    height: 68vh;
+    overflow-y: auto;
+    max-height: 70vh;
+    overflow-x: hidden;
 }
 .cardsDivContent{
-    height: 100%;
-    flex-direction: row;
-    flex-wrap: wrap;
-    width: 80%;
+    flex: 0 0 33.33%;
+    padding: 10px;
+    width: 30%;
+    box-sizing: border-box;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
-.cardsDivContent div{
+.imageDiv{
     width: 20%;
+    height: 20%;
+    margin: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.textDiv{
+    width: 100%;
     height: 20%;
     margin: 15px;
     display: flex;
@@ -32,5 +45,9 @@
 .cardsDivContent span{
     font-size: 12px;
     margin: 5px;
-    white-space: nowrap;
+    white-space: pre-wrap;
 }
+.text-with-line-break {
+    text-align: center;
+  }
+  
