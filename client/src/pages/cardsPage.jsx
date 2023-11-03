@@ -9,6 +9,7 @@ import { useLocation } from "react-router-dom";
 
 function CardsPage() {
   const [cardsBaralho, setBaralho] = useState([])
+  const [baralhoId, setBaralhoId] = useState('')
   const [podeCriarCartao, setCriacao] = useState(false)
   const [showModalCriar, showModal] = useState(false)
   const location = useLocation();
@@ -17,11 +18,11 @@ function CardsPage() {
   let baralhoNome = location.state.baralhoNome;
 
   useEffect(() => {
-
     var baralhoId = localStorage.getItem('baralhoId')
+    setBaralhoId(baralhoId)
     var cards
     Axios.post('http://localhost:3001/api/cards', { baralhoId: baralhoId }).then((response) => {
-      setBaralho(response.data)
+    setBaralho(response.data)
       cards = response.data
       if (cards.length < 15) {
         setCriacao(true)
@@ -59,7 +60,7 @@ function CardsPage() {
               <span className="text-with-line-break">Criar um cartão</span>
             </div>
           </div>}
-        {showModalCriar && (<CardModal />)}
+        {showModalCriar && (<CardModal baralhoId={baralhoId} />)}
       </div>
       <NavBar />
     </div>

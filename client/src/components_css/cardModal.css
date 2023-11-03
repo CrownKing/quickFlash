@@ -24,11 +24,49 @@ body.active-modal{
     border-radius: 3px;
     max-width: 600px;
     min-width: 300px;
+    height: 60%;
+    display: grid;
 }
-
+.modalContent div span{
+    color:#8AC26D;
+    font-weight: bold;
+}
+.closeDiv{
+    justify-content: flex-end;
+    display: flex;
+    font-size: 25px;
+}
+.closeDiv span{
+    cursor: pointer;
+}
 .closeModal{
     position: absolute;
     top: 10px;
     right: 10px;
     padding: 5px 7px;
+}
+.divCampoPerguntaResposta{
+    display: flex;
+    flex-direction: column;
+}
+
+.divCampoPerguntaResposta input{
+    height: 65%;
+    background-color: #DDE9F0;
+    border: none;
+}
+
+.buttonsDiv{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.buttonsDiv button{
+    height: 25%;
+    width: 50%;
+    background-color: #8AC26D;
+    border: none;
+    margin: 5px;
+    font-weight: bold;
 }

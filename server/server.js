@@ -51,8 +51,22 @@ app.post("/api/cards", (req, res)=>{
     db.query(sqlSelectCards,[baralhoId],(err, result) =>{
         res.send(result)
     })
-
 })
+
+ app.post("/api/cards/criar",(req,res)=>{
+     const baralhoId = req.body.baralhoId
+     const pergunta = req.body.pergunta
+     const resposta = req.body.resposta
+     const disciplinaId = req.body.disciplinaId
+     const inserCard = "INSERT INTO flashcard (pergunta, resposta, baralhoId, disciplinaId) VALUES (?,?,?,?);"
+     db.query(inserCard,[pergunta,resposta,baralhoId,disciplinaId],(err, result)=>{
+         if(err) {
+             console.log(err);
+             res.send(err.toString()); 
+          }
+         res.send()
+     })
+ })
 
 app.listen(3001, () =>{
 
