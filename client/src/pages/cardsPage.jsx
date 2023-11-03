@@ -34,6 +34,12 @@ function CardsPage() {
     showModal(true)
   }
 
+  const closeModal = () =>{
+    debugger
+    showModal(false)
+
+  }
+
   return (
     <div className='allCardDiv'>
       <DeckSpace baralhoNome={baralhoNome} />
@@ -60,7 +66,7 @@ function CardsPage() {
               <span className="text-with-line-break">Criar um cartão</span>
             </div>
           </div>}
-        {showModalCriar && (<CardModal baralhoId={baralhoId} />)}
+        {showModalCriar && <CardModal baralhoId={baralhoId} fecha={closeModal} />}
       </div>
       <NavBar />
     </div>
