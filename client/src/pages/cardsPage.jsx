@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import '../pages_css/cardsPage.css'
-import CardModal from '../components/cardModal'
+import CreateCardModal from '../components/createCardModal'
 import NavBar from '../components/navBar'
 import DeckSpace from '../components/deckSpace'
 import cardIcon from '../icons/cardsIconTransparente.png'
@@ -66,7 +66,7 @@ function CardsPage() {
               <span className="text-with-line-break">Criar um cartão</span>
             </div>
           </div>}
-        {showModalCriar && <CardModal baralhoId={baralhoId} fecha={closeModal} />}
+        {showModalCriar && <CreateCardModal baralhoId={baralhoId} fecha={closeModal} />}
       </div>
       <NavBar />
     </div>

@@ -2,14 +2,19 @@ import React, { useState } from 'react'
 import '../components_css/cardModal.css'
 import Axios from 'axios'
 
-function CardModal({ baralhoId, fecha }) { // Usar destructuring para receber as props corretamente
+function CreateCardModal({ baralhoId, fecha }) { // Usar destructuring para receber as props corretamente
     const [pergunta, setPergunta] = useState('')
     const [resposta, setResposta] = useState('')
     const [disciplinaId, setDisciplina] = useState('4')
     
     const salvarCartao = () => {
+        if(resposta!==''&&pergunta!==''){
         Axios.post('http://localhost:3001/api/cards/criar', { pergunta, resposta, baralhoId, disciplinaId }).then(() => {
         })
+    }
+        else{
+            alert("Preencha com alguma pergunta/resposta")
+        }
     }
 
     const click = () => {
@@ -40,4 +45,4 @@ function CardModal({ baralhoId, fecha }) { // Usar destructuring para receber as
     )
 }
 
-export default CardModal
+export default CreateCardModal
