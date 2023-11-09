@@ -1,0 +1,35 @@
+.allflashCardDiv{
+    height: 92vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.cardDiv{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: rotate(90deg);
+    height: 55vh;
+    width: 100%;
+}
+.textDiv{
+    width: 90%;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}
+.divButton{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 7vh;
+    display: flex;
+    justify-content: center;
+
+}
+.divButton button{
+    width: 25%;
+    height: 100%;
+    background-color: #8AC26D;
+}

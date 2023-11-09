@@ -7,6 +7,7 @@ import reportWebVitals from './reportWebVitals';
 import NewAccountPage from './pages/newAccountPage';
 import HomePage from './pages/homePage';
 import CardsPage from './pages/cardsPage';
+import FlashCardPage from './pages/flashCardPage';
 
 import {
   createBrowserRouter,
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
   {
     path: "cartoes",
     element: <div><CardsPage/></div>,
+  },
+  {
+    path:"flashcard",
+    element: <div><FlashCardPage/></div>,
   },
 ]);
 
