@@ -24,6 +24,9 @@ function FlashCardPage() {
     const clickButtonResposta = () => {
         setResposta(true)
     }
+    const clickButtonAvaliarResposta =() =>{
+        setResposta(false)
+    }
 
     const changeFlashCardPlus = () => {
         if (index === allBaralho.length-1) {
@@ -53,7 +56,7 @@ function FlashCardPage() {
     return (
         <div className='allflashCardDiv'>
             <div className='cardDiv'>
-                <div onClick={changeFlashCardMinus}>
+                <div onClick={changeFlashCardMinus} className='iconDiv'>
                     <FontAwesomeIcon icon={faChevronLeft} size='2x'></FontAwesomeIcon>
                 </div>
                 {!showResposta && <div className='textDiv'>
@@ -70,14 +73,14 @@ function FlashCardPage() {
                         {cardAtual.resposta}
                     </span>
                     <div className='divButton'>
-                        <button></button>
-                        <button></button>
-                        <button></button>
-                        <button></button>
+                        <button onClick={clickButtonAvaliarResposta}>1</button>
+                        <button onClick={clickButtonAvaliarResposta}>2</button>
+                        <button onClick={clickButtonAvaliarResposta}>3</button>
+                        <button onClick={clickButtonAvaliarResposta}>4</button>
                     </div>
 
                 </div>}
-                <div onClick={changeFlashCardPlus}>
+                <div onClick={changeFlashCardPlus} className='iconDiv'>
                     <FontAwesomeIcon icon={faChevronRight} size='2x'></FontAwesomeIcon>
                 </div>
 
