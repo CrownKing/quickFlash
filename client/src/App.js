@@ -21,6 +21,9 @@ function App() {
 
 const verifyEmaileSenha = () => {
   Axios.get('http://localhost:3001/api/user/email').then((response)=>{
+    console.log("---------")  
+  console.log(response)
+    console.log("---------")
     const usuario = response.data.filter(x => x.email === usuarioEmail)
     if(usuario === null || usuario === undefined || usuario.length === 0){
       alert("Email ou senha inválidos")

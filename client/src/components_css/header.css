@@ -1,4 +1,4 @@
-.navBackGround{
+.allHeader{
     background-color: #8AC26D;
     height: 8vh;
     position:absolute;
@@ -8,13 +8,9 @@
     display: flex;
     justify-content: space-evenly;
 }
-.navBackGround div{
+.allHeader div{
     width: 25%;
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.card{
-    scale: 0.1;
 }

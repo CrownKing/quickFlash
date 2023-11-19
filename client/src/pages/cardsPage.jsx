@@ -5,6 +5,7 @@ import NavBar from '../components/navBar'
 import DeckSpace from '../components/deckSpace'
 import cardIcon from '../icons/cardsIconTransparente.png'
 import FlashCardPage from './flashCardPage'
+import Header from '../components/header'
 import { useNavigate } from 'react-router-dom';
 import Axios from 'axios'
 import { useLocation } from "react-router-dom";
@@ -53,6 +54,7 @@ function CardsPage() {
 
   return (
     <div className='allCardDiv'>
+      <Header/>
       <DeckSpace baralhoNome={baralhoNome} />
       <div className='cardsDiv'>
         {cardsBaralho.map((card,index) => {

@@ -1,5 +1,6 @@
 .allCardDiv{
-    height: 92vh;
+    padding-top: 8vh;
+    height: 65vh;
     width: 100%;
 }
 .cardsDiv{
@@ -30,13 +31,15 @@
     flex-direction: column;
 }
 .textDiv{
-    width: 100%;
-    height: 20%;
-    margin: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+    width: 100% !important; 
+    height: 20% !important;
+    margin: 15px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-direction: column !important;
+    background-color: white !important;
+    color: black !important;
 }
 .cardsDivContent div img{
     max-width: 100%;

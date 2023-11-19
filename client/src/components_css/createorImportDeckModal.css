@@ -30,6 +30,7 @@ body.active-modal{
 .buttonsDiv2{
     display: grid;
     height: 83%;
+    padding-right: 5px;
 }
 .closeDiv2{
     font-weight: bold;
@@ -45,4 +46,5 @@ body.active-modal{
     display: flex;
     justify-content: center;
     align-items: center;
+    margin: 5px;
 }
