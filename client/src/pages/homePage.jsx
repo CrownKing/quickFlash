@@ -25,15 +25,32 @@ function HomePage() {
     var data = localStorage.getItem("loginData")
     data = JSON.parse(data)
     await setUserData(data[0])
-    console.log(data[0])
     Axios.post('http://localhost:3001/api/baralhos', { criadorId: data[0].usuarioId }).then((response) => {
-      let qntBaralho = response.data.length
-      setBaralho(response.data)
-      if (qntBaralho === 3) {
-        setShowCriaBaralho(false)
-      }
+      let getBaralhosAux = []
+      getBaralhosAux=response.data
+        Axios.post('http://localhost:3001/api/baralhos/curtidos',{usuarioId: data[0].usuarioId}).then((response)=>{
+          var idsCurtidos = []
+          if(response.data.length!=0){
+          for(let i = 0; i<response.data.length; i++){
+            idsCurtidos.push(response.data[i].baralhoId)
+          }
+          Axios.post('http://localhost:3001/api/baralhos/buscarBaralhoCompartilhado',{baralhosId: idsCurtidos}).then((response)=>{
+            response.data.map((x)=> getBaralhosAux.push(x))
+            setBaralho(getBaralhosAux)
+            let qntBaralho = getBaralhosAux.length
+            if(qntBaralho>=3){
+              setShowCriaBaralho(false)
+            }
+            else{
+              setShowCriaBaralho(true)
+            }
+          })
+        }
+        })
     })
   }
+
+  console.log(listaBaralhos)
 
   const criaBaralho = async () => {
     setCriaBaralhoClickado(true)
@@ -50,8 +67,8 @@ function HomePage() {
   return (
     <div>
       <Header />
-      <div className="App" onClick={criaBaralho}>
-        {showCriaBaralho && <div className='deckDiv'>
+      <div className="App">
+        {showCriaBaralho && <div className='deckDiv' onClick={criaBaralho}>
           <div className='deckPhoto'>
             <div>
               <img src={addBaralho} alt="Logo" />

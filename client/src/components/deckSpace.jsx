@@ -3,7 +3,12 @@ import '../components_css/deckSpace.css'
 import deckPhoto from '../icons/deckBox.png'
 
 
-function DeckSpace({baralhoNome}) {
+const changeBaralhoNome = (novoBaralhoNome) =>{
+
+}
+
+
+function DeckSpace({baralhoNome,baralhoId}) {
   return (
     <div className='deckDiv'>
     <div className='deckPhoto'>
@@ -12,7 +17,7 @@ function DeckSpace({baralhoNome}) {
       </div>
     </div>
     <div className='deckName'>
-        <div><span> {baralhoNome}</span></div>
+        <div> <span onChange={(e)=> changeBaralhoNome(e.target.value)}> {baralhoNome}</span></div>
       </div>
   </div>
   )

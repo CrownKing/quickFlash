@@ -55,7 +55,7 @@ function CardsPage() {
   return (
     <div className='allCardDiv'>
       <Header/>
-      <DeckSpace baralhoNome={baralhoNome} />
+      <DeckSpace baralhoNome={baralhoNome} baralhoId={baralhoId} />
       <div className='cardsDiv'>
         {cardsBaralho.map((card,index) => {
           return (
