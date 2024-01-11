@@ -46,6 +46,15 @@ function HomePage() {
             }
           })
         }
+        else{
+          setBaralho(getBaralhosAux)
+          if(getBaralhosAux.length>=3){
+            setShowCriaBaralho(false)
+          }
+          else{
+            setShowCriaBaralho(true)
+          }
+        }
         })
     })
   }

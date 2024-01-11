@@ -1,0 +1,36 @@
+.allCompartDiv{
+    height: 84vh;
+    margin-top: 8vh;
+}
+.inputDiv{
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    padding-top: 3vh;
+}
+.inputDiv input{
+    border:none;
+    border-bottom: solid 3px;
+    width: 30%;
+    margin-right: 10vw;
+}
+.inputDiv button{
+    background-color: #8AC26D;
+    border: none;
+    width: 14vw;
+    height: 4vh;
+    border-radius: 5px;
+}
+.input :focus{
+    border-color: dodgerblue;
+    outline: none;
+}
+.deckName{
+    justify-content: flex-start !important;
+}
+.divBGNome{
+    width: 60% !important;
+}
+.icone{
+    padding-left: 10vw;
+}

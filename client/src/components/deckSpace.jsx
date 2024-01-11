@@ -9,6 +9,8 @@ const changeBaralhoNome = (novoBaralhoNome) =>{
 
 
 function DeckSpace({baralhoNome,baralhoId}) {
+  console.log(baralhoNome)
+  console.log(baralhoId)
   return (
     <div className='deckDiv'>
     <div className='deckPhoto'>

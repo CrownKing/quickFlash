@@ -40,9 +40,9 @@ app.post("/api/baralhos/curtidos", (req,res)=>{
 })
 
 app.post("/api/baralhos/curtidos/getBaralho",(req,res)=>{
-    const baralhosId = req.body.baralhosId
-    const sqlSelectBaralho = "SELECT * FROM baralho WHERE baralhoId IN ?;"
-    db.query(sqlSelectBaralho,baralhosId,(err,result)=>{
+    const baralhoId = req.body.baralhoId
+    const sqlSelectBaralho = "SELECT * FROM baralho WHERE baralhoId = ?;"
+    db.query(sqlSelectBaralho,[baralhoId],(err,result)=>{
         if(err){
             console.log(err);
             res.send(err.toString());
@@ -114,6 +114,47 @@ app.post("/api/cards", (req, res)=>{
     })
  })
 
+ app.post("/api/baralhos/curtirBaralho",(req,res)=>{
+    const usuarioId = req.body.usuarioId
+    const baralhoId = req.body.baralhoId
+    const curtir = "INSERT INTO usuariobaralho (usuarioId, baralhoId) VALUES (?,?);"
+    db.query(curtir,[usuarioId,baralhoId], (err,result)=>{
+        if(err){
+            console.log(err)
+            res.send(err.toString())
+        }
+        res.send(result)
+    })
+ })
+
+ app.post("/api/baralhos/getCurtido",(req,res)=>{
+    const usuarioId = req.body.usuarioId
+    const baralhoId = req.body.baralhoId
+    const getCurtir = "SELECT * FROM usuariobaralho WHERE usuarioId =? AND baralhoId =?;"
+    console.log(usuarioId)
+    console.log(baralhoId)
+    db.query(getCurtir,[usuarioId,baralhoId], (err,result)=>{
+        if(err){
+            console.log(err)
+            res.send(err.toString())
+        }
+        res.send(result)
+    })
+ })
+
+ app.post("/api/baralhos/deslikeBaralho",(req,res)=>{
+    const usuarioId = req.body.usuarioId
+    const baralhoId = req.body.baralhoId
+    const deslike = "DELETE FROM usuariobaralho where usuarioId=? AND baralhoId=?;"
+    db.query(deslike,[usuarioId,baralhoId], (err,result)=>{
+        if(err){
+            console.log(err)
+            res.send(err.toString())
+        }
+        res.send(result)
+    })
+ })
+
  app.post("/api/baralhos/buscarBaralhoCompartilhado", (req,res)=>{
     if(req.body.baralhosId.length===1){
         const baralhosId = req.body.baralhosId[0]
@@ -151,6 +192,48 @@ app.post("/api/cards", (req, res)=>{
             res.send(result)
         })
     }
+ })
+
+ app.post("/api/flashcard/respondeCard",(req,res)=>{
+    const nota = req.body.resposta // A nota varia de 1 a 4, nota 1 significa erro, logo, a caixa deve ser a 1 pois significa que o card sera repetido todos os dias
+    const usuarioId = req.body.usuarioId
+    const cardId = req.body.cardId
+    const dataResposta = req.body.dataResposta
+    const responde = "INSERT INTO usuarioflashcard (caixaId, usuarioId, cardId, dataUltimaResposta) VALUES (?,?,?,?);"
+    switch (nota){
+        case 1:{
+            const pontuacao = 0
+        }
+        case 2:{
+            const pontuacao = 0
+        }
+        case 3:{
+            const pontuacao = 1;
+        }
+        case 4:{
+            const pontuacao = 2
+        }
+    }
+    db.query(responde,[nota,usuarioId, cardId, dataResposta], (err,result)=>{
+        if(err){
+            console.log(err)
+            res.send(err.toString())
+        }
+        res.send(result)
+    })
+ })
+
+ app.post("/api/flashcard/respondeCard",(req,res)=>{
+    const novosPontos = req.body.novosPontos
+    const usuarioId = req.body.usuarioId
+    const atualizaPts = "UPDATE usuario SET pontos = ?  WHERE usuarioId = ?;"
+    db.query(atualizaPts,[novosPontos,usuarioId], (err,result)=>{
+        if(err){
+            console.log(err)
+            res.send(err.toString())
+        }
+        res.send(result)
+    })
  })
 
 app.listen(3001, () =>{

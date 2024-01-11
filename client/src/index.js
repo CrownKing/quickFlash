@@ -13,6 +13,7 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
+import BuscarBaralho from './pages/buscarBaralho';
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
   {
     path:"flashcard",
     element: <div><FlashCardPage/></div>,
+  },
+  {
+    path:"compartilhar",
+    element:<div><BuscarBaralho/></div>
   },
 ]);
 
