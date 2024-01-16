@@ -1,12 +1,14 @@
-.deckDiv{
+.deckDiv {
     height: 25%;
     display: flex;
 }
-.App{
-    height: 92vh !important;
+
+.App {
+    position: relative;
     padding-top: 8vh !important;
 }
-.deckPhoto{
+
+.deckPhoto {
     height: 80%;
     width: 40%;
     border-radius: 25px;
@@ -14,20 +16,23 @@
     justify-content: center;
     align-items: center;
 }
-.deckPhoto div{
+
+.deckPhoto div {
     height: 80%;
     width: 80%;
     display: flex;
     background-color: #C9CBCD;
 }
-.deckName{
+
+.deckName {
     align-items: center;
     width: 60%;
     height: 80%;
     display: flex;
     justify-content: center;
 }
-.deckName div{
+
+.deckName div {
     border-radius: 15px;
     display: flex;
     align-items: center;
@@ -36,6 +41,12 @@
     height: 20%;
     background-color: #C9CBCD;
 }
-.deckName div span{
+
+.deckName div span {
     padding-left: 15px;
+}
+
+.NavBar {
+    position: sticky;
+    bottom: 0;
 }

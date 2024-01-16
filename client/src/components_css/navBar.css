@@ -1,20 +1,26 @@
-.navBackGround{
+.navBackGround {
     background-color: #8AC26D;
     height: 8vh;
-    position:absolute;
-    left:0;
-    bottom:0;
-    right:0;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    right: 0;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-between;
 }
-.navBackGround div{
-    width: 25%;
+
+.navBackGround div a {
+    color: black;
+}
+
+.navBackGround div {
+    flex: 1; /* Crescer horizontalmente */
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 30%;
 }
 
-.card{
-    scale: 0.1;
+.card {
+    transform: scale(0.1); /* Corrigido scale, transform ao invés de scale */
 }
