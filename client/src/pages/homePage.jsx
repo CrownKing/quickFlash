@@ -7,6 +7,7 @@ import Header from '../components/header.jsx';
 import CreateorImportDeckModal from '../components/createorImportDeckModal.jsx';
 import { useNavigate } from 'react-router-dom';
 import Axios from 'axios'
+import { BookLoader } from "react-awesome-loaders";
 
 
 function HomePage() {
@@ -14,6 +15,7 @@ function HomePage() {
   const [showCriaBaralho, setShowCriaBaralho] = useState(true)
   const [userData, setUserData] = useState({})
   const [criaBralhoClickado, setCriaBaralhoClickado] = useState(false)
+  const [showLoad, setLoad] = useState(true)
   const navigate = useNavigate();
 
 
@@ -30,7 +32,7 @@ function HomePage() {
       getBaralhosAux=response.data
         Axios.post('http://localhost:3001/api/baralhos/curtidos',{usuarioId: data[0].usuarioId}).then((response)=>{
           var idsCurtidos = []
-          if(response.data.length!=0){
+          if(response.data.length!==0){
           for(let i = 0; i<response.data.length; i++){
             idsCurtidos.push(response.data[i].baralhoId)
           }
@@ -55,12 +57,14 @@ function HomePage() {
             setShowCriaBaralho(true)
           }
         }
+        setTimeout(
+          () => setLoad(false), 
+          3000
+        );
+        
         })
     })
   }
-
-  console.log(listaBaralhos)
-
   const criaBaralho = async () => {
     setCriaBaralhoClickado(true)
   }
@@ -75,6 +79,13 @@ function HomePage() {
   }
   return (
     <div>
+      {showLoad &&       <BookLoader
+        background={"linear-gradient(135deg, #6066FA, #4645F6)"}
+        desktopSize={"100px"}
+        mobileSize={"80px"}
+        textColor={"#4645F6"}
+      />}
+      {!showLoad &&<>
       <Header />
       <div className="App">
         {showCriaBaralho && <div className='deckDiv' onClick={criaBaralho}>
@@ -109,7 +120,10 @@ function HomePage() {
         {criaBralhoClickado && <CreateorImportDeckModal />}
         <NavBar />
       </div>
+      </>
+}
     </div>
+    
   )
 }
 export default HomePage

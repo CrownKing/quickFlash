@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 
 function LoginPage() {
   return (
+    
     <div className="App">
     <div className='logo'>
     <img src={logo} alt="Logo" />;
