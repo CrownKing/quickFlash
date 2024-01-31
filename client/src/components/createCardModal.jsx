@@ -8,8 +8,10 @@ function CreateCardModal({ baralhoId, fecha }) { // Usar destructuring para rece
     const [disciplinaId, setDisciplina] = useState('4')
     
     const salvarCartao = () => {
+
         if(resposta!==''&&pergunta!==''){
-        Axios.post('http://localhost:3001/api/cards/criar', { pergunta, resposta, baralhoId, disciplinaId }).then(() => {
+            var data = JSON.parse(localStorage.getItem("loginData"))
+            Axios.post('http://localhost:3001/api/cards/criar', { pergunta, resposta, baralhoId, disciplinaId, usuarioId:data[0].usuarioId }).then(() => {
         })
     }
         else{

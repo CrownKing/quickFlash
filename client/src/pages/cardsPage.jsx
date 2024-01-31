@@ -23,10 +23,11 @@ function CardsPage() {
   let baralhoNome = location.state.baralhoNome;
 
   useEffect(() => {
+    var data = JSON.parse(localStorage.getItem("loginData"))
     var baralhoId = localStorage.getItem('baralhoId')
     setBaralhoId(baralhoId)
     var cards
-    Axios.post('http://localhost:3001/api/cards', { baralhoId: baralhoId }).then((response) => {
+    Axios.post('http://localhost:3001/api/cards', { baralhoId: baralhoId, usuarioId: data[0].usuarioId }).then((response) => {
     setBaralho(response.data)
       cards = response.data
       if (cards.length < 15) {

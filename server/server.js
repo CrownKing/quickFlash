@@ -67,18 +67,48 @@ app.get("/api/user/email",(req,res)=>{
     })
 })
 
-app.post("/api/cards", (req, res)=>{
-    const baralhoId = req.body.baralhoId
-    const sqlSelectCards = "SELECT * FROM flashcard where baralhoId = ?;"
-    db.query(sqlSelectCards,[baralhoId],(err, result) =>{
-        res.send(result)
-    })
-})
+app.post("/api/cards", (req, res) => {
+    const baralhoId = req.body.baralhoId;
+    const usuarioId = req.body.usuarioId;
+    const today = new Date();
+    const todayString = today.toLocaleString();
+
+    const sqlSelectCardIdByBoxDay = "SELECT cardId FROM usuarioflashcard where usuarioId = ? AND (dataProximaResposta IS NULL OR dataProximaResposta <= ?)";
+
+    db.query(sqlSelectCardIdByBoxDay, [usuarioId, todayString], (err, result) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send("Erro no servidor");
+            return;
+        }
+
+        const valoresCardId = result.map(row => row.cardId);
+
+        if (valoresCardId.length === 0) {
+            // Se não houver cardId disponível, enviar uma resposta vazia
+            res.send([]);
+            return;
+        }
+
+        const sqlSelectCards = "SELECT * FROM flashcard where baralhoId = ? AND cardId IN (?)";
+
+        db.query(sqlSelectCards, [baralhoId, valoresCardId], (err, result) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send("Erro no servidor");
+                return;
+            }
+
+            res.send(result);
+        });
+    });
+});
 
  app.post("/api/cards/criar",(req,res)=>{
      const baralhoId = req.body.baralhoId
      const pergunta = req.body.pergunta
      const resposta = req.body.resposta
+     const usuarioId = req.body.usuarioId
      const disciplinaId = req.body.disciplinaId
      const inserCard = "INSERT INTO flashcard (pergunta, resposta, baralhoId, disciplinaId) VALUES (?,?,?,?);"
      db.query(inserCard,[pergunta,resposta,baralhoId,disciplinaId],(err, result)=>{
@@ -86,7 +116,16 @@ app.post("/api/cards", (req, res)=>{
              console.log(err);
              res.send(err.toString()); 
           }
+          var cardId = result.insertId
          res.send()
+         const insertCardUsuarioCard = "INSERT INTO usuarioflashcard (caixaId, usuarioId, cardId) VALUES (?,?,?)"
+         db.query(insertCardUsuarioCard, [1,usuarioId, cardId], (error, res)=>{
+            if(err) {
+                console.log(err);
+                res.send(err.toString()); 
+             }
+            res.send()
+         })
      })
  }) 
 
@@ -114,7 +153,7 @@ app.post("/api/cards", (req, res)=>{
     })
  })
 
- app.post("/api/baralhos/curtirBaralho",(req,res)=>{
+ app.post("/api/baralhos/curtirBaralho",(req,res)=>{ // quando eu curtir um baralho, ele deve ser inserido na tabela usuarioflashcard, e nessa tabela que eu controlo quais cartões serão puxados para exibição
     const usuarioId = req.body.usuarioId
     const baralhoId = req.body.baralhoId
     const curtir = "INSERT INTO usuariobaralho (usuarioId, baralhoId) VALUES (?,?);"
@@ -123,6 +162,25 @@ app.post("/api/cards", (req, res)=>{
             console.log(err)
             res.send(err.toString())
         }
+        const sqlSelectCards = "SELECT cardId FROM flashcard where baralhoId = ? "
+        db.query(sqlSelectCards, [baralhoId], (error, resultado)=>{
+            const valoresCardId = resultado.map(row => row.cardId);
+
+            if (valoresCardId.length === 0) {
+                // Se não houver cardId disponível, enviar uma resposta vazia
+                res.send([]);
+                return;
+            }
+            const insertCardUsuarioCard = "INSERT INTO usuarioflashcard (caixaId, usuarioId, cardId) VALUES (?,?,?)"
+            for(let i = 0; i<valoresCardId.length;i++){  // faz um insert para cada id de card contido no baralho criado
+                db.query(insertCardUsuarioCard, [baralhoId, usuarioId, valoresCardId[i]], (eror, resultInsert2)=>{
+                    if(eror){
+                        console.log(eror)
+                        res.send(eror.toString())
+                    }
+                })
+            }
+        })
         res.send(result)
     })
  })
@@ -199,39 +257,40 @@ app.post("/api/cards", (req, res)=>{
     const usuarioId = req.body.usuarioId
     const cardId = req.body.cardId
     const dataResposta = req.body.dataResposta
-    const responde = "INSERT INTO usuarioflashcard (caixaId, usuarioId, cardId, dataUltimaResposta) VALUES (?,?,?,?);"
-    switch (nota){
-        case 1:{
-            const pontuacao = 0
-        }
-        case 2:{
-            const pontuacao = 0
-        }
-        case 3:{
-            const pontuacao = 1;
-        }
-        case 4:{
-            const pontuacao = 2
-        }
+    const responde = "INSERT INTO usuarioflashcard (caixaId, usuarioId, cardId, dataProximaResposta) VALUES (?,?,?,?);"
+    let pontuacao = 0;
+
+    switch (nota) {
+        case 1:
+            pontuacao = 0;
+            dataResposta.setDate(dataResposta.getDate() + 1);
+            break;
+        case 2:
+            pontuacao = 0;
+            dataResposta.setDate(dataResposta.getDate() + 3);
+            break;
+        case 3:
+            pontuacao = 1;
+            dataResposta.setDate(dataResposta.getDate() + 7);
+            break;
+        case 4:
+            pontuacao = 2;
+            dataResposta.setDate(dataResposta.getDate() + 14);
+            break;
     }
     db.query(responde,[nota,usuarioId, cardId, dataResposta], (err,result)=>{
         if(err){
             console.log(err)
             res.send(err.toString())
         }
-        res.send(result)
-    })
- })
-
- app.post("/api/flashcard/respondeCard",(req,res)=>{
-    const novosPontos = req.body.novosPontos
-    const usuarioId = req.body.usuarioId
-    const atualizaPts = "UPDATE usuario SET pontos = ?  WHERE usuarioId = ?;"
-    db.query(atualizaPts,[novosPontos,usuarioId], (err,result)=>{
-        if(err){
-            console.log(err)
-            res.send(err.toString())
-        }
+        const atualizaPts = "UPDATE usuario SET pontos = pontos + ? WHERE usuarioId = ?;"
+        db.query(atualizaPts,[pontuacao,usuarioId], (err,result)=>{
+            if(err){
+                console.log(err)
+                res.send(err.toString())
+            }
+            res.send(result)
+        })
         res.send(result)
     })
  })

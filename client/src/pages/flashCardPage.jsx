@@ -29,9 +29,8 @@ function FlashCardPage() {
 
         var data = JSON.parse(localStorage.getItem("loginData"))
         var usuarioId = data[0].usuarioId
-        var dataResposta = new Date
+        var dataResposta = new Date ()
         dataResposta = dataResposta.toLocaleString()
-        debugger
         var cardId = allBaralho[index].cardId
         Axios.post('http://localhost:3001/api/flashcard/respondeCard',{resposta, usuarioId, cardId, dataResposta}).then((response) => {
 
