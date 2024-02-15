@@ -171,7 +171,7 @@ app.post("/api/cards", (req, res) => {
                 res.send([]);
                 return;
             }
-            const insertCardUsuarioCard = "INSERT INTO usuarioflashcard (caixaId, usuarioId, cardId) VALUES (?,?,?)"
+            const insertCardUsuarioCard = "INSERT INTO usuarioflashcard (caixaId, usuarioId, cardId) VALUES (?,?,?)"// nao pode ser insert, visto que agora ja existe a chave quando se curte o baralho, tem q ser um update
             for(let i = 0; i<valoresCardId.length;i++){  // faz um insert para cada id de card contido no baralho criado
                 db.query(insertCardUsuarioCard, [baralhoId, usuarioId, valoresCardId[i]], (eror, resultInsert2)=>{
                     if(eror){

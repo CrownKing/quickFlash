@@ -1,6 +1,6 @@
 .App{
   height: 100vh;
-  background-color: #DDE9F0;
+  background-color: #F4F4F4;
 }
 .logo{
   display: flex;
@@ -14,22 +14,17 @@
 }
 .inputs input{
   margin: 0px;
-  border: none;
-  background-color: #8AC26D;
-  border-radius: 25px;
-  height: 7vh;
+  border: solid 1px var(--primary);
+  background-color: #F4F4F4;
+  border-radius: 8px;
+  height: 48px;
   width: 100%;
+  padding:0 12px;
 }
-.input1{
+.input{
   height: 15vh;
   display: flex;
   align-items: center;
-  justify-content: center;
-}
-.input2{
-  height: 15vh;
-  display: block;
-  align-items: start;
   justify-content: center;
 }
 .create{
@@ -54,10 +49,4 @@
     width: 10vh;
     border: none;
     border-radius: 20px;
-}
-#inputId::placeholder {
-  color: #000000;
-  font-size: 30px;
-  padding-left: 30px;
-  opacity: 1;
 }

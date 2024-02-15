@@ -1,0 +1,16 @@
+
+.novoComponente {
+  }
+  
+  .textoDiv {
+  }
+  
+  .botoesDiv {
+    display: flex;
+  }
+  
+  .inputDiv {
+    display: flex;
+    align-items: center;
+  }
+  
