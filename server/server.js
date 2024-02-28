@@ -350,20 +350,30 @@ app.get("/api/login/monitor/getCardsSolicitados/:id", (req, res) => {
     res.send(result);
   });
 });
-app.get("/api/login/monitor/solicitaAvaliacao", (req, res) => {
+
+app.post("/api/login/monitor/solicitaAvaliacao", (req, res) => {
   // requisição para solicitar avaliação de um card
   const usuarioId = req.body.usuarioId;
   const cardId = req.body.cardId;
-  const avaliadorId = req.body.avaliadorId;
-  const sqlInsert =
-    "INSERT INTO usuarioavaliaflashcard (usuarioId,cardId, avaliadorId, avaliacao) VALUES (?,?,?,''))";
-  db.query(sqlInsert, [usuarioId, cardId, avaliadorId], (err, result) => {
+  const disciplinaId = req.body.disciplinaId;
+  const sqlSelect =
+    "SELECT usuarioId from usuariodisciplina where disciplinaId = ?";
+  db.query(sqlSelect, [disciplinaId], (err, result) => {
     if (err) {
       console.error("Erro ao executar a consulta SQL:", err);
       res.status(500).send("Erro interno do servidor");
       return;
     }
-    res.send(result);
+    const sqlInsert =
+      "INSERT INTO usuarioavaliaflashcard (usuarioId,cardId, avaliadorId, avaliacao) VALUES (?,?,?,''))";
+    db.query(sqlInsert, [usuarioId, cardId, result], (error, res) => {
+      if (error) {
+        console.error("Erro ao executar a consulta SQL:", err);
+        res.status(500).send("Erro interno do servidor");
+        return;
+      }
+      res.send(res);
+    });
   });
 });
 
