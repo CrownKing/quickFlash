@@ -1,51 +1,81 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
 
-import reportWebVitals from './reportWebVitals';
-import NewAccountPage from './pages/newAccountPage';
-import HomePage from './pages/homePage';
-import CardsPage from './pages/cardsPage';
-import FlashCardPage from './pages/flashCardPage';
+import reportWebVitals from "./reportWebVitals";
+import NewAccountPage from "./pages/newAccountPage";
+import HomePage from "./pages/homePage";
+import CardsPage from "./pages/cardsPage";
+import FlashCardPage from "./pages/flashCardPage";
+import AvaliarCartaoPage from "./pages/avaliarCartao";
 
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
-import BuscarBaralho from './pages/buscarBaralho';
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import BuscarBaralho from "./pages/buscarBaralho";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <div><App/></div>,
+    element: (
+      <div>
+        <App />
+      </div>
+    ),
   },
   {
     path: "home",
-    element: <div><HomePage/></div>,
+    element: (
+      <div>
+        <HomePage />
+      </div>
+    ),
   },
   {
     path: "novaConta",
-    element: <div><NewAccountPage/></div>,
+    element: (
+      <div>
+        <NewAccountPage />
+      </div>
+    ),
   },
   {
     path: "cartoes",
-    element: <div><CardsPage/></div>,
+    element: (
+      <div>
+        <CardsPage />
+      </div>
+    ),
   },
   {
-    path:"flashcard",
-    element: <div><FlashCardPage/></div>,
+    path: "flashcard",
+    element: (
+      <div>
+        <FlashCardPage />
+      </div>
+    ),
   },
   {
-    path:"compartilhar",
-    element:<div><BuscarBaralho/></div>
+    path: "compartilhar",
+    element: (
+      <div>
+        <BuscarBaralho />
+      </div>
+    ),
+  },
+  {
+    path: "avaliar",
+    element: (
+      <div>
+        <AvaliarCartaoPage />
+      </div>
+    ),
   },
 ]);
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-     <RouterProvider router={router} />
+    <RouterProvider router={router} />
   </React.StrictMode>
 );
 

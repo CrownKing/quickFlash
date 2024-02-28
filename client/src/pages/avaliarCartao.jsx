@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import "../components_css/avaliarCartao.css";
+import "../pages_css/avaliarCartao.css";
 import Axios from "axios";
+import NavBar from "../components/navBar";
+import Header from "../components/header";
 
-function AvaliarCartaoModal() {
+function AvaliarCartaoPage() {
   const [texto1, setTexto1] = useState("");
   const [texto2, setTexto2] = useState("");
   const [inputTexto, setInputTexto] = useState("");
@@ -21,6 +23,7 @@ function AvaliarCartaoModal() {
 
   return (
     <div className="novoComponente">
+      <Header />
       <div className="textoDiv">{texto1}</div>
       <div className="botoesDiv">
         <button onClick={handleClickBotao1}>Botão 1</button>
@@ -35,8 +38,9 @@ function AvaliarCartaoModal() {
         />
         <button onClick={handleClickBotao3}>Botão 3</button>
       </div>
+      <NavBar />
     </div>
   );
 }
 
-export default AvaliarCartaoModal;
+export default AvaliarCartaoPage;
