@@ -22,24 +22,46 @@ function AvaliarCartaoPage() {
   };
 
   return (
-    <div className="novoComponente">
+    <>
       <Header />
-      <div className="textoDiv">{texto1}</div>
-      <div className="botoesDiv">
-        <button onClick={handleClickBotao1}>Botão 1</button>
-        <button onClick={handleClickBotao2}>Botão 2</button>
-      </div>
-      <div className="textoDiv">{texto2}</div>
-      <div className="inputDiv">
-        <input
-          type="text"
-          value={inputTexto}
-          onChange={(e) => setInputTexto(e.target.value)}
-        />
-        <button onClick={handleClickBotao3}>Botão 3</button>
+      <div className="avaliaCardDiv">
+        <div className="textoDiv">
+          <h3>Pergunta</h3>
+          <span>O que é a internet?</span>
+          <h3>Resposta</h3>
+          <span>O que é a internet?</span>
+        </div>
+        <div className="botoesDiv">
+          <span>Avalie esse cartão</span>
+          <buttons className="buttonsComponent">
+            <button className="buttonTag" onClick={handleClickBotao1}>
+              Bom
+            </button>
+            <button className="buttonTag" onClick={handleClickBotao2}>
+              Ruim
+            </button>
+          </buttons>
+        </div>
+        <div className="textoDiv2">
+          <span>
+            Caso tenha achado ruim e quiser fornecer um feedback,preencha o
+            campo abaixo
+          </span>
+        </div>
+        <div className="inputComponent">
+          <input
+            className="inputTag"
+            type="text"
+            value={inputTexto}
+            onChange={(e) => setInputTexto(e.target.value)}
+          />
+          <button className="buttonSend" onClick={handleClickBotao3}>
+            Enviar
+          </button>
+        </div>
       </div>
       <NavBar />
-    </div>
+    </>
   );
 }
 
