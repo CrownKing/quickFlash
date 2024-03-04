@@ -15,9 +15,9 @@ function NavBar() {
         </Link>
       </div>
       <div>
-        <Link to="/home">
+        {/* <Link to="/home">
           <img src={cards} alt="Logo" className="card" />
-        </Link>
+        </Link> */}
       </div>
       <div>
         <Link to="/points">

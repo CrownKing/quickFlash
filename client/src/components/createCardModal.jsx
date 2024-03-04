@@ -1,24 +1,25 @@
 import React, { useState } from "react";
 import "../components_css/cardModal.css";
 import Axios from "axios";
+import DisciplinaModal from "./disciplinaModal";
 
 function CreateCardModal({ baralhoId, fecha }) {
   // Usar destructuring para receber as props corretamente
   const [pergunta, setPergunta] = useState("");
   const [resposta, setResposta] = useState("");
-  const [disciplinaId, setDisciplina] = useState("4");
+  const [disciplinaSelecionada, setDisciplina] = useState({});
   const [avalia, setAvalia] = useState(false);
 
   const salvarCartao = () => {
     if (resposta !== "" && pergunta !== "") {
       var data = JSON.parse(localStorage.getItem("loginData"));
-      Axios.post("http://localhost:3001/api/cards/criar", {
-        pergunta,
-        resposta,
-        baralhoId,
-        disciplinaId,
-        usuarioId: data[0].usuarioId,
-      }).then(() => {});
+      // Axios.post("http://localhost:3001/api/cards/criar", {
+      //   pergunta,
+      //   resposta,
+      //   baralhoId,
+      //   disciplinaSelecionada.disciplinaId,
+      //   usuarioId: data[0].usuarioId,
+      // }).then(() => {});
     } else {
       alert("Preencha com alguma pergunta/resposta");
     }
@@ -27,8 +28,16 @@ function CreateCardModal({ baralhoId, fecha }) {
     setAvalia(true);
   };
 
+  const recebeDisciplinaSelecionada = (disciplina) => {
+    setDisciplina(disciplina);
+  };
+
   const click = () => {
     fecha(); // Chama a função closeModal do componente pai
+  };
+
+  const enviaParaAv = () => {
+    //axios.post("http://localhost:3001/api/login/monitor/solicitaAvaliacao");
   };
 
   return (
@@ -58,6 +67,12 @@ function CreateCardModal({ baralhoId, fecha }) {
           <button onClick={salvarCartao}> OK </button>
           <button onClick={setAvaliar}> Enviar para avaliação</button>
         </div>
+        {avalia && (
+          <DisciplinaModal
+            enviaParaAv={enviaParaAv}
+            onDisciplinaSelecionada={recebeDisciplinaSelecionada}
+          />
+        )}
       </div>
     </div>
   );

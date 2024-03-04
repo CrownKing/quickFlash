@@ -8,7 +8,7 @@ import NewAccountPage from "./pages/newAccountPage";
 import HomePage from "./pages/homePage";
 import CardsPage from "./pages/cardsPage";
 import FlashCardPage from "./pages/flashCardPage";
-import AvaliarCartaoPage from "./pages/avaliarCartao";
+import ListAvaliarCartaoPage from "./pages/ListAvaliarCartao";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import BuscarBaralho from "./pages/buscarBaralho";
@@ -66,7 +66,7 @@ const router = createBrowserRouter([
     path: "avaliar",
     element: (
       <div>
-        <AvaliarCartaoPage />
+        <ListAvaliarCartaoPage />
       </div>
     ),
   },

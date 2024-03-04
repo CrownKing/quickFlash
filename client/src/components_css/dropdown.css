@@ -1,0 +1,13 @@
+.autoComplete{
+    background-color: var(--secondary);
+}
+
+.sendButton{
+height: 40px;
+width: 80%;
+align-self: center;
+justify-self: center;
+border: none;
+border-radius: 8px;
+background-color: var(--primary);
+}

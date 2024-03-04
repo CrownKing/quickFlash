@@ -4,7 +4,7 @@ import Axios from "axios";
 import NavBar from "../components/navBar";
 import Header from "../components/header";
 
-function AvaliarCartaoPage() {
+function ListAvaliarCartaoPage() {
   const [texto1, setTexto1] = useState("");
   const [texto2, setTexto2] = useState("");
   const [inputTexto, setInputTexto] = useState("");
@@ -65,4 +65,4 @@ function AvaliarCartaoPage() {
   );
 }
 
-export default AvaliarCartaoPage;
+export default ListAvaliarCartaoPage;

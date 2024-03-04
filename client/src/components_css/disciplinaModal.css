@@ -1,0 +1,10 @@
+.teste{
+    display: grid;
+    justify-content: end;
+    align-items: end;
+}
+
+.dropdown{
+    width: 100%;
+    background-color: var(--secondary);
+}

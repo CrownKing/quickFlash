@@ -351,6 +351,18 @@ app.get("/api/login/monitor/getCardsSolicitados/:id", (req, res) => {
   });
 });
 
+app.get("/api/disciplinas", (req, res) => {
+  const sqlGet = "SELECT * from disciplina";
+  db.query(sqlGet, (err, result) => {
+    if (err) {
+      console.error("Erro ao executar a consulta SQL:", err);
+      res.status(500).send("Erro interno do servidor");
+      return;
+    }
+    res.send(result);
+  });
+});
+
 app.post("/api/login/monitor/solicitaAvaliacao", (req, res) => {
   // requisição para solicitar avaliação de um card
   const usuarioId = req.body.usuarioId;
