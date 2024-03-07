@@ -58,15 +58,15 @@ body.active-modal{
 
 .buttonsDiv{
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
 }
 .buttonsDiv button{
-    height: 25%;
-    width: 50%;
-    background-color: #8AC26D;
+    height: 40px;
+    width: 45%;
+    align-self: center;
+    justify-self: center;
     border: none;
-    margin: 5px;
-    font-weight: bold;
+    border-radius: 8px;
+    background-color: var(--primary);
 }

@@ -18,19 +18,13 @@ function DisciplinaModal({ fecha, onDisciplinaSelecionada }) {
   };
 
   const disciplinaSelecionada = (disciplina) => {
-    debugger;
     setDisciplina(disciplina);
     onDisciplinaSelecionada(disciplina); // Chamando a função fornecida pelo pai
   };
 
-  const teste = () => {
-    debugger;
-    console.log(listaDeDiciplinas);
-  };
-
   return (
     <div className="teste">
-      <div onClick={() => teste()}>
+      <div>
         <span>Selecione a disciplina do card para avaliação</span>
       </div>
       <DropdownAutocomplete

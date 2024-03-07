@@ -8,24 +8,37 @@ function CreateCardModal({ baralhoId, fecha }) {
   const [pergunta, setPergunta] = useState("");
   const [resposta, setResposta] = useState("");
   const [disciplinaSelecionada, setDisciplina] = useState({});
-  const [avalia, setAvalia] = useState(false);
+  const [usuarioId, setUsuarioId] = useState(null);
 
-  const salvarCartao = () => {
-    if (resposta !== "" && pergunta !== "") {
-      var data = JSON.parse(localStorage.getItem("loginData"));
-      // Axios.post("http://localhost:3001/api/cards/criar", {
-      //   pergunta,
-      //   resposta,
-      //   baralhoId,
-      //   disciplinaSelecionada.disciplinaId,
-      //   usuarioId: data[0].usuarioId,
-      // }).then(() => {});
+  const salvarCartao = (clicked) => {
+    var data = JSON.parse(localStorage.getItem("loginData"));
+    debugger;
+    var disciplinaId = disciplinaSelecionada.disciplinaId;
+    setUsuarioId(data[0].usuarioId);
+    if (resposta !== "" && pergunta !== "" && disciplinaSelecionada !== null) {
+      Axios.post("http://localhost:3001/api/cards/criar", {
+        pergunta: pergunta,
+        resposta: resposta,
+        baralhoId: baralhoId,
+        disciplinaId: disciplinaId,
+        usuarioId: data[0].usuarioId,
+      }).then((response) => {
+        var cartaoId = response.data.cardId;
+        debugger;
+        if (clicked === "avaliacao") {
+          Axios.post(
+            "http://localhost:3001/api/login/monitor/solicitaAvaliacao",
+            {
+              usuarioId: usuarioId,
+              cardId: cartaoId,
+              disciplinaId: disciplinaId,
+            }
+          ).then(() => {});
+        }
+      });
     } else {
       alert("Preencha com alguma pergunta/resposta");
     }
-  };
-  const setAvaliar = () => {
-    setAvalia(true);
   };
 
   const recebeDisciplinaSelecionada = (disciplina) => {
@@ -36,17 +49,15 @@ function CreateCardModal({ baralhoId, fecha }) {
     fecha(); // Chama a função closeModal do componente pai
   };
 
-  const enviaParaAv = () => {
-    //axios.post("http://localhost:3001/api/login/monitor/solicitaAvaliacao");
-  };
+  const enviaParaAv = () => {};
 
   return (
     <div className="modalDiv">
       <div className="overlay"></div>
       <div className="modalContent">
         <div className="divCampoPerguntaResposta">
-          <div className="closeDiv" onClick={click}>
-            <span>X</span>
+          <div className="closeDiv">
+            <span onClick={click}>X</span>
           </div>
           <span>Pergunta</span>
           <input
@@ -63,16 +74,18 @@ function CreateCardModal({ baralhoId, fecha }) {
             }}
           ></input>
         </div>
-        <div className="buttonsDiv">
-          <button onClick={salvarCartao}> OK </button>
-          <button onClick={setAvaliar}> Enviar para avaliação</button>
-        </div>
-        {avalia && (
+        {
           <DisciplinaModal
-            enviaParaAv={enviaParaAv}
+            enviaParaAv={() => {}}
             onDisciplinaSelecionada={recebeDisciplinaSelecionada}
           />
-        )}
+        }
+        <div className="buttonsDiv">
+          <button onClick={() => salvarCartao("OK")}> OK </button>
+          <button onClick={() => salvarCartao("avaliacao")}>
+            Enviar para avaliação
+          </button>
+        </div>
       </div>
     </div>
   );

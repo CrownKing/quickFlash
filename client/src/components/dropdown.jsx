@@ -3,12 +3,17 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import "../components_css/dropdown.css";
 
-const DropdownAutocomplete = ({ options, labelField }) => {
+const DropdownAutocomplete = ({ options, labelField, onChange }) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
-  const handleInputChange = (event, newValue) => {
-    debugger;
-    setSelectedOption(newValue);
+  const handleInputChange = async (event, newValue) => {
+    const filteredOptions = options.filter(
+      (x) => x.nomeDisciplina === newValue
+    );
+    setSelectedOption(filteredOptions.length > 0 ? filteredOptions[0] : null);
+    if (onChange) {
+      await onChange(filteredOptions.length > 0 ? filteredOptions[0] : null);
+    }
   };
 
   return (
@@ -29,7 +34,6 @@ const DropdownAutocomplete = ({ options, labelField }) => {
           />
         )}
       />
-      <button className="sendButton">Solicitar avaliação</button>
     </>
   );
 };

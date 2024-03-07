@@ -267,27 +267,38 @@ app.post("/api/cards/criar", (req, res) => {
   const resposta = req.body.resposta;
   const usuarioId = req.body.usuarioId;
   const disciplinaId = req.body.disciplinaId;
+
   const inserCard =
     "INSERT INTO flashcard (pergunta, resposta, baralhoId, disciplinaId) VALUES (?,?,?,?);";
+
   db.query(
     inserCard,
     [pergunta, resposta, baralhoId, disciplinaId],
     (err, result) => {
       if (err) {
         console.log(err);
-        res.send(err.toString());
+        res.status(500).send(err.toString());
+        return;
       }
+
       var cardId = result.insertId;
-      res.send();
+
       const insertCardUsuarioCard =
         "INSERT INTO usuarioflashcard (caixaId, usuarioId, cardId) VALUES (?,?,?)";
-      db.query(insertCardUsuarioCard, [1, usuarioId, cardId], (error, res) => {
-        if (err) {
-          console.log(err);
-          res.send(err.toString());
+
+      db.query(
+        insertCardUsuarioCard,
+        [1, usuarioId, cardId],
+        (error, result2) => {
+          if (error) {
+            console.log(error);
+            res.status(500).send(error.toString());
+            return;
+          }
+
+          res.status(200).json({ cardId }); // Envie o ID do cartão no corpo da resposta
         }
-        res.send();
-      });
+      );
     }
   );
 });
@@ -340,7 +351,7 @@ app.post("/api/flashcard/respondeCard", (req, res) => {
 app.get("/api/login/monitor/getCardsSolicitados/:id", (req, res) => {
   // requisição que busca todos os cards a serem avaliados quando um monitor acessar o app
   const usuarioId = req.params.id; // metodo de pegar um parametro pelo link da requisição
-  const sqlGet = "SELECT * FROM usuarioavaliaflashcard' WHERE usuarioId = ?";
+  const sqlGet = "SELECT * FROM usuarioavaliaflashcard WHERE usuarioId = ?";
   db.query(sqlGet, [usuarioId], (err, result) => {
     if (err) {
       console.error("Erro ao executar a consulta SQL:", err);
@@ -364,10 +375,13 @@ app.get("/api/disciplinas", (req, res) => {
 });
 
 app.post("/api/login/monitor/solicitaAvaliacao", (req, res) => {
-  // requisição para solicitar avaliação de um card
+  // Requisição para solicitar avaliação de um card
   const usuarioId = req.body.usuarioId;
   const cardId = req.body.cardId;
   const disciplinaId = req.body.disciplinaId;
+  console.log("CARDID A SEGUIR");
+  console.log(cardId);
+  console.log(disciplinaId);
   const sqlSelect =
     "SELECT usuarioId from usuariodisciplina where disciplinaId = ?";
   db.query(sqlSelect, [disciplinaId], (err, result) => {
@@ -376,15 +390,23 @@ app.post("/api/login/monitor/solicitaAvaliacao", (req, res) => {
       res.status(500).send("Erro interno do servidor");
       return;
     }
+
+    // Verifica se há resultados
+    if (result.length === 0) {
+      res.status(404).send("Nenhum usuário encontrado para esta disciplina");
+      return;
+    }
+    const avaliadorId = result[0].usuarioId; // Obtém o usuário da primeira linha do resultado
+    console.log(usuarioId);
     const sqlInsert =
-      "INSERT INTO usuarioavaliaflashcard (usuarioId,cardId, avaliadorId, avaliacao) VALUES (?,?,?,''))";
-    db.query(sqlInsert, [usuarioId, cardId, result], (error, res) => {
+      "INSERT INTO usuarioavaliaflashcard (usuarioId,cardId, avaliadorId, avaliacao) VALUES (?,?,?,'')";
+    db.query(sqlInsert, [usuarioId, cardId, avaliadorId], (error, result) => {
       if (error) {
-        console.error("Erro ao executar a consulta SQL:", err);
+        console.error("Erro ao executar a consulta SQL:", error);
         res.status(500).send("Erro interno do servidor");
         return;
       }
-      res.send(res);
+      res.send(result); // Retorna o resultado da segunda consulta, se necessário
     });
   });
 });
