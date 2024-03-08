@@ -8,10 +8,33 @@
     display: flex;
     justify-content: space-evenly;
 }
-
-.allHeader div {
-    width: 25%;
+.returnDiv{    width: 25%;
     display: flex;
     align-items: center;
+    justify-content: center;}
+.deckIdDiv{    width: 25%;
+    display: flex;
+    align-items: center;
+    justify-content: center;}
+.coinsDiv{    width: 25%;
+    display: flex;
+    align-items: center;
+    justify-content: center;}
+
+.notificacao{
+    width: 16px;
+    height: 16px;
+    background-color: red;
+    border-radius: 50%;
+    position: absolute;
+    top: 28px;
+    right: 54px;
+    display: flex;
+    text-align: center;
     justify-content: center;
+    color: white;
+}
+.qntCartoes{
+    font-size: 12px;
+    font-weight: bold;
 }

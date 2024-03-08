@@ -24,17 +24,6 @@ function HomePage() {
   const getUserData = async () => {
     var data = localStorage.getItem("loginData");
     data = JSON.parse(data);
-    if (data[0].monitor === 1) {
-      Axios.get(
-        `http://localhost:3001/api/login/monitor/getCardsSolicitados/${data[0].usuarioId}`
-      )
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.error("Erro ao fazer a solicitação para o servidor:", error);
-        });
-    }
     await setUserData(data[0]);
     Axios.post("http://localhost:3001/api/baralhos", {
       criadorId: data[0].usuarioId,
