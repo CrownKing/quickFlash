@@ -7,7 +7,7 @@ import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import Axios from "axios";
 
-function Header() {
+function Header({ onCartoesAvaliarChange }) {
   const [userData, setUserdata] = useState([]);
   const [cartoesAvaliar, setCartoesParaAvaliar] = useState(null);
   const location = useLocation();
@@ -34,6 +34,7 @@ function Header() {
         )
           .then((response) => {
             setCartoesParaAvaliar(response.data.length);
+            onCartoesAvaliarChange(response.data);
           })
           .catch((error) => {
             console.error(

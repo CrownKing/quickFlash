@@ -5,9 +5,7 @@ import NavBar from "../components/navBar";
 import Header from "../components/header";
 
 function ListAvaliarCartaoPage() {
-  const [texto1, setTexto1] = useState("");
-  const [texto2, setTexto2] = useState("");
-  const [inputTexto, setInputTexto] = useState("");
+  const [listaCartoesParaAv, setCartoesAvaliar] = useState([]);
 
   const handleClickBotao1 = () => {
     // Lógica para o primeiro botão
@@ -17,15 +15,33 @@ function ListAvaliarCartaoPage() {
     // Lógica para o segundo botão
   };
 
-  const handleClickBotao3 = () => {
-    // Lógica para o terceiro botão
+  const handleCartoesAvaliarChange = (value) => {
+    debugger;
+    if (listaCartoesParaAv.length != value.length) {
+      setCartoesAvaliar(value);
+    }
+    // avaliacao: "";
+    // avaliadorId: 1;
+    // cardId: 51;
+    // usuarioId: 1;
   };
 
   return (
     <>
-      <Header />
+      <Header onCartoesAvaliarChange={handleCartoesAvaliarChange} />
       <div className="avaliaCardDiv">
-        <div className="textoDiv">
+        {listaCartoesParaAv.map((cartao) => (
+          <div className="cartaoASerAvaliado">
+            <div className="direita">
+              <span> Aqui vem a pergunta do card</span>
+            </div>
+            <div className="esquerda">
+              <span> Aqui vem o nome de quem mandou</span>
+              <span> Status da duvida, se foi respondida ou n</span>
+            </div>
+          </div>
+        ))}
+        {/* <div className="textoDiv">
           <h3>Pergunta</h3>
           <span>O que é a internet?</span>
           <h3>Resposta</h3>
@@ -58,7 +74,7 @@ function ListAvaliarCartaoPage() {
           <button className="buttonSend" onClick={handleClickBotao3}>
             Enviar
           </button>
-        </div>
+        </div> */}
       </div>
       <NavBar />
     </>

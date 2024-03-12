@@ -1,6 +1,7 @@
 :root{
   --primary:#8AC26D;
   --secondary:#DDE9F0;
+  --tertiary: #C9CBCD;
 }
 body {
   margin: 0;
