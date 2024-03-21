@@ -261,6 +261,45 @@ app.post("/api/cards", (req, res) => {
   });
 });
 
+app.post("/api/cards/selecionaCardsParaAvaliacao", (req, res) => {
+  const cardIdsArray = req.body.cardIdsArray;
+  const placeholders = cardIdsArray.map(() => "?").join(",");
+  const sqlSelectCards = `SELECT * FROM flashcard WHERE cardId IN (${placeholders})`;
+  const queryParams = [...cardIdsArray];
+  db.query(sqlSelectCards, queryParams, (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Erro no servidor");
+      return;
+    }
+    res.send(result);
+  });
+});
+
+app.post("/api/cards/setAvaliacao", (req, res) => {
+  const cardId = req.body.cardId;
+  const avaliacao = req.body.avaliacao;
+  const nota = req.body.nota;
+  const sqlSetAvaliacao = `UPDATE usuarioavaliaflashcard SET avaliacao = ? WHERE cardId = ?`;
+  const sqlSetNota = "UPDATE flashcard SET cardBom = ? WHERE cardId = ?";
+  db.query(sqlSetAvaliacao, [avaliacao, cardId], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Erro no servidor");
+      return;
+    }
+    res.send(result);
+  });
+  db.query(sqlSetNota, [nota, cardId], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Erro no servidor");
+      return;
+    }
+    res.send(result);
+  });
+});
+
 app.post("/api/cards/criar", (req, res) => {
   const baralhoId = req.body.baralhoId;
   const pergunta = req.body.pergunta;
@@ -351,7 +390,7 @@ app.post("/api/flashcard/respondeCard", (req, res) => {
 app.get("/api/login/monitor/getCardsSolicitados/:id", (req, res) => {
   // requisição que busca todos os cards a serem avaliados quando um monitor acessar o app
   const usuarioId = req.params.id; // metodo de pegar um parametro pelo link da requisição
-  const sqlGet = "SELECT * FROM usuarioavaliaflashcard WHERE usuarioId = ?";
+  const sqlGet = "SELECT * FROM usuarioavaliaflashcard WHERE avaliadorId = ?";
   db.query(sqlGet, [usuarioId], (err, result) => {
     if (err) {
       console.error("Erro ao executar a consulta SQL:", err);

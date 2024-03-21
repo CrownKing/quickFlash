@@ -1,0 +1,85 @@
+/* Estilos para o modal */
+.avaliar-card-modal {
+    height: 88vh;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #212121;
+    width: 80%;
+    max-width: 600px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    z-index: 9999; /* Garante que o modal esteja na frente do conteúdo da página */
+  }
+  
+  /* Estilos para o fundo escuro do modal */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Adiciona transparência */
+    z-index: 9998; /* Z-index menor que o do modal para que fique atrás */
+  }
+  
+  .avaliar-card-modal{
+    height: 88vh;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .info{
+    height: 20vh;
+    color: var(--primary);
+    justify-content: center;
+    display: flex;
+    background-color: #303030;
+  }
+
+  .avaliacaoDiv{
+    height: 24vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .avaliacao{
+    height: 100%;
+    width: 92%;
+    border: solid 4px var(--primary);
+    border-radius: 8px;
+    background-color: #303030;
+    text-align: left;
+    white-space: nowrap;
+    overflow-y: hidden;
+    resize: none;
+    color: var(--primary);
+  }
+.innerBar{
+  height: 12px;
+}
+  .divButtons{
+    height: 8vh;
+    padding-top: 76px;
+  }
+  .legenda{
+    color: var(--primary);
+  }
+  .buttonsComp{
+    display: flex;
+    height: 8vh;
+    justify-content: space-around;
+  }
+
+  .button{
+    height: 100%;
+    width: 40%;
+    align-self: center;
+    justify-self: center;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--primary);
+  }
