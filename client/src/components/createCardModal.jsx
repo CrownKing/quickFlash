@@ -12,7 +12,6 @@ function CreateCardModal({ baralhoId, fecha }) {
 
   const salvarCartao = (clicked) => {
     var data = JSON.parse(localStorage.getItem("loginData"));
-    debugger;
     var disciplinaId = disciplinaSelecionada.disciplinaId;
     setUsuarioId(data[0].usuarioId);
     if (resposta !== "" && pergunta !== "" && disciplinaSelecionada !== null) {
@@ -24,12 +23,11 @@ function CreateCardModal({ baralhoId, fecha }) {
         usuarioId: data[0].usuarioId,
       }).then((response) => {
         var cartaoId = response.data.cardId;
-        debugger;
         if (clicked === "avaliacao") {
           Axios.post(
             "http://localhost:3001/api/login/monitor/solicitaAvaliacao",
             {
-              usuarioId: usuarioId,
+              usuarioId: data[0].usuarioId,
               cardId: cartaoId,
               disciplinaId: disciplinaId,
             }

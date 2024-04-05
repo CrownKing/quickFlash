@@ -21,6 +21,10 @@ function HomePage() {
     getUserData();
   }, []);
 
+  const closeModal = () => {
+    setCriaBaralhoClickado(false);
+  };
+
   const getUserData = async () => {
     var data = localStorage.getItem("loginData");
     data = JSON.parse(data);
@@ -67,7 +71,8 @@ function HomePage() {
     setCriaBaralhoClickado(true);
   };
 
-  const selecionaBaralho = (idBaralho, baralhoNome) => {
+  const selecionaBaralho = (idBaralho, baralhoNome, deck) => {
+    localStorage.setItem("deck", JSON.stringify(deck));
     navigate("/cartoes", {
       state: {
         baralhoNome: baralhoNome,
@@ -108,7 +113,7 @@ function HomePage() {
                 <div
                   className="deckDiv"
                   onClick={() =>
-                    selecionaBaralho(deck.baralhoId, deck.baralhoNome)
+                    selecionaBaralho(deck.baralhoId, deck.baralhoNome, deck)
                   }
                 >
                   <div className="deckPhoto">
@@ -124,7 +129,9 @@ function HomePage() {
                 </div>
               );
             })}
-            {criaBralhoClickado && <CreateorImportDeckModal />}
+            {criaBralhoClickado && (
+              <CreateorImportDeckModal fecha={closeModal} />
+            )}
             <NavBar />
           </div>
         </>

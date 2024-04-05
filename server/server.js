@@ -55,7 +55,8 @@ app.post("/api/baralhos/curtidos/getBaralho", (req, res) => {
 app.post("/api/baralhos/criarBaralho", (req, res) => {
   const baralhoNome = req.body.baralhoNome;
   const criadorId = req.body.usuarioId;
-  const sqlInsert = "INSERT INTO baralho (baralhoNome, criadorId) VALUES (?,?)";
+  const sqlInsert =
+    "INSERT INTO baralho (baralhoNome, criadorId,baralhoBom) VALUES (?,?,0)";
   db.query(sqlInsert, [baralhoNome, criadorId], (err, result) => {
     if (err) {
       console.error(err);
@@ -112,7 +113,7 @@ app.post("/api/baralhos/curtirBaralho", (req, res) => {
         return;
       }
       const insertCardUsuarioCard =
-        "INSERT INTO usuarioflashcard (caixaId, usuarioId, cardId) VALUES (?,?,?)"; // nao pode ser insert, visto que agora ja existe a chave quando se curte o baralho, tem q ser um update
+        "INSERT INTO usuarioflashcard (caixaId, usuarioId, cardId, ) VALUES (?,?,?)"; // nao pode ser insert, visto que agora ja existe a chave quando se curte o baralho, tem q ser um update
       for (let i = 0; i < valoresCardId.length; i++) {
         // faz um insert para cada id de card contido no baralho criado
         db.query(
@@ -216,6 +217,7 @@ app.post("/user", (req, res) => {
     }
   );
 });
+
 app.get("/api/user/email", (req, res) => {
   const sqlGet = "SELECT * FROM usuario;";
   db.query(sqlGet, (err, result) => {
@@ -227,7 +229,7 @@ app.post("/api/cards", (req, res) => {
   const baralhoId = req.body.baralhoId;
   const usuarioId = req.body.usuarioId;
   const today = new Date();
-  const todayString = today.toLocaleString();
+  const todayString = today.toISOString().split("T")[0];
 
   const sqlSelectCardIdByBoxDay =
     "SELECT cardId FROM usuarioflashcard where usuarioId = ? AND (dataProximaResposta IS NULL OR dataProximaResposta <= ?)";
@@ -238,7 +240,6 @@ app.post("/api/cards", (req, res) => {
       res.status(500).send("Erro no servidor");
       return;
     }
-
     const valoresCardId = result.map((row) => row.cardId);
 
     if (valoresCardId.length === 0) {
@@ -263,7 +264,9 @@ app.post("/api/cards", (req, res) => {
 
 app.post("/api/cards/selecionaCardsParaAvaliacao", (req, res) => {
   const cardIdsArray = req.body.cardIdsArray;
+  console.log(cardIdsArray);
   const placeholders = cardIdsArray.map(() => "?").join(",");
+  console.log(placeholders);
   const sqlSelectCards = `SELECT * FROM flashcard WHERE cardId IN (${placeholders})`;
   const queryParams = [...cardIdsArray];
   db.query(sqlSelectCards, queryParams, (err, result) => {
@@ -288,7 +291,6 @@ app.post("/api/cards/setAvaliacao", (req, res) => {
       res.status(500).send("Erro no servidor");
       return;
     }
-    res.send(result);
   });
   db.query(sqlSetNota, [nota, cardId], (err, result) => {
     if (err) {
@@ -334,7 +336,6 @@ app.post("/api/cards/criar", (req, res) => {
             res.status(500).send(error.toString());
             return;
           }
-
           res.status(200).json({ cardId }); // Envie o ID do cartão no corpo da resposta
         }
       );
@@ -342,55 +343,153 @@ app.post("/api/cards/criar", (req, res) => {
   );
 });
 
+// app.post("/api/flashcard/respondeCard", (req, res) => {
+//   const nota = req.body.resposta; // A nota varia de 1 a 4, nota 1 significa erro, logo, a caixa deve ser a 1 pois significa que o card sera repetido todos os dias
+//   const usuarioId = req.body.usuarioId;
+//   const cardId = req.body.cardId;
+//   const dataResposta = req.body.dataResposta;
+//   // ERROR GRAVE, TENHO QUE ANALISAR SE O CARTAO JA EXISTE ANTES DE TENTAR INSERIR NO CARD
+//   const responde =
+//     "INSERT INTO usuarioflashcard (caixaId, usuarioId, cardId, dataProximaResposta) VALUES (?,?,?,?);";
+//   let pontuacao = 0;
+
+//   switch (nota) {
+//     case 1:
+//       pontuacao = 0;
+//       dataResposta.setDate(dataResposta.getDate() + 1);
+//       break;
+//     case 2:
+//       pontuacao = 0;
+//       dataResposta.setDate(dataResposta.getDate() + 3);
+//       break;
+//     case 3:
+//       pontuacao = 1;
+//       dataResposta.setDate(dataResposta.getDate() + 7);
+//       break;
+//     case 4:
+//       pontuacao = 2;
+//       dataResposta.setDate(dataResposta.getDate() + 14);
+//       break;
+//   }
+//   db.query(responde, [nota, usuarioId, cardId, dataResposta], (err, result) => {
+//     if (err) {
+//       console.log(err);
+//       res.send(err.toString());
+//     }
+//     const atualizaPts =
+//       "UPDATE usuario SET pontos = pontos + ? WHERE usuarioId = ?;";
+//     db.query(atualizaPts, [pontuacao, usuarioId], (err, result) => {
+//       if (err) {
+//         console.log(err);
+//         res.send(err.toString());
+//       }
+//       res.send(result);
+//     });
+//     res.send(result);
+//   });
+// });
+
 app.post("/api/flashcard/respondeCard", (req, res) => {
-  const nota = req.body.resposta; // A nota varia de 1 a 4, nota 1 significa erro, logo, a caixa deve ser a 1 pois significa que o card sera repetido todos os dias
+  const nota = req.body.resposta;
   const usuarioId = req.body.usuarioId;
   const cardId = req.body.cardId;
-  const dataResposta = req.body.dataResposta;
-  const responde =
+  const dataResposta = new Date(req.body.dataResposta);
+  console.log(dataResposta);
+  const selectQuery =
+    "SELECT * FROM usuarioflashcard WHERE usuarioId = ? AND cardId = ?;";
+  const insertQuery =
     "INSERT INTO usuarioflashcard (caixaId, usuarioId, cardId, dataProximaResposta) VALUES (?,?,?,?);";
+  const updateQuery =
+    "UPDATE usuarioflashcard SET dataProximaResposta = ?,caixaId = ? WHERE usuarioId = ? AND cardId = ?;";
+
   let pontuacao = 0;
+  let varDataAux;
 
   switch (nota) {
-    case 1:
+    case "1":
+      console.log("entrei 1");
       pontuacao = 0;
+      varDataAux = dataResposta.getDate();
       dataResposta.setDate(dataResposta.getDate() + 1);
       break;
-    case 2:
+    case "2":
+      console.log("entrei 2");
       pontuacao = 0;
+      varDataAux = dataResposta.getDate();
       dataResposta.setDate(dataResposta.getDate() + 3);
       break;
-    case 3:
+    case "3":
+      console.log("entrei 3");
       pontuacao = 1;
+      varDataAux = dataResposta.getDate();
       dataResposta.setDate(dataResposta.getDate() + 7);
       break;
-    case 4:
+    case "4":
+      console.log("entrei 4");
       pontuacao = 2;
+      varDataAux = dataResposta.getDate();
       dataResposta.setDate(dataResposta.getDate() + 14);
       break;
   }
-  db.query(responde, [nota, usuarioId, cardId, dataResposta], (err, result) => {
+  console.log(varDataAux);
+  db.query(selectQuery, [usuarioId, cardId], (err, rows) => {
     if (err) {
       console.log(err);
       res.send(err.toString());
+      return;
     }
-    const atualizaPts =
-      "UPDATE usuario SET pontos = pontos + ? WHERE usuarioId = ?;";
-    db.query(atualizaPts, [pontuacao, usuarioId], (err, result) => {
-      if (err) {
-        console.log(err);
-        res.send(err.toString());
-      }
-      res.send(result);
-    });
-    res.send(result);
+    if (rows && rows.length > 0) {
+      // Se a combinação de caixaId, usuarioId e cardId já existe, execute o UPDATE
+      db.query(
+        updateQuery,
+        [dataResposta, nota, usuarioId, cardId],
+        (err, result) => {
+          if (err) {
+            console.log(err);
+            res.send(err.toString());
+            return;
+          }
+          res.send(result);
+        }
+      );
+    } else {
+      console.log("rows");
+      console.log(rows);
+      // Se a combinação de caixaId, usuarioId e cardId não existe, execute o INSERT
+      db.query(
+        insertQuery,
+        [nota, usuarioId, cardId, dataResposta],
+        (err, result) => {
+          if (err) {
+            console.log(err);
+            res.send(err.toString());
+            return;
+          }
+          res.send(result);
+        }
+      );
+    }
   });
 });
 
 app.get("/api/login/monitor/getCardsSolicitados/:id", (req, res) => {
-  // requisição que busca todos os cards a serem avaliados quando um monitor acessar o app
+  // requisição que busca todos os cards enviados para avaliação
   const usuarioId = req.params.id; // metodo de pegar um parametro pelo link da requisição
   const sqlGet = "SELECT * FROM usuarioavaliaflashcard WHERE avaliadorId = ?";
+  db.query(sqlGet, [usuarioId], (err, result) => {
+    if (err) {
+      console.error("Erro ao executar a consulta SQL:", err);
+      res.status(500).send("Erro interno do servidor");
+      return;
+    }
+    res.send(result);
+  });
+});
+
+app.get("/api/login/monitor/getCardsSolicitados/Aluno/:id", (req, res) => {
+  // requisição que busca todos os cards a serem avaliados quando um monitor acessar o app
+  const usuarioId = req.params.id; // metodo de pegar um parametro pelo link da requisição
+  const sqlGet = "SELECT * FROM usuarioavaliaflashcard WHERE usuarioId = ?";
   db.query(sqlGet, [usuarioId], (err, result) => {
     if (err) {
       console.error("Erro ao executar a consulta SQL:", err);

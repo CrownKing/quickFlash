@@ -1,8 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import "../components_css/avaliarCard.css";
+import Axios from "axios";
 
 function AvaliarCardModal({ card }) {
-  console.log(card);
+  const [avaliacao, setAvl] = useState("Nenhuma avaliacao foi feita");
+
+  const setAvaliacao = (nota) => {
+    Axios.post("http://localhost:3001/api/cards/setAvaliacao", {
+      cardId: card.cardId,
+      avaliacao: avaliacao,
+      nota: nota,
+    }).then((response) => {});
+  };
   return (
     <>
       <div className="modal-overlay"></div>
@@ -21,12 +30,23 @@ function AvaliarCardModal({ card }) {
               <h2>
                 <span className="legenda">Avalie esse card</span>
               </h2>
-              <input type="text" className="avaliacao" id="" />
+              <input
+                type="text"
+                className="avaliacao"
+                id=""
+                onChange={(e) => {
+                  setAvl(e.target.value);
+                }}
+              />
             </div>
             <div className="divButtons">
               <buttons className="buttonsComp">
-                <button className="button">Bom</button>
-                <button className="button">Ruim</button>
+                <button className="button" onClick={() => setAvaliacao(1)}>
+                  Bom
+                </button>
+                <button className="button" onClick={() => setAvaliacao(0)}>
+                  Ruim
+                </button>
               </buttons>
             </div>
           </div>
