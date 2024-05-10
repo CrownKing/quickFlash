@@ -10,6 +10,7 @@ import Axios from "axios";
 function Header({ onCartoesAvaliarChange }) {
   const [userData, setUserdata] = useState([]);
   const [cartoesAvaliar, setCartoesParaAvaliar] = useState(null);
+  const [showAlert, setShowAlert] = useState(false); // Estado para controlar a exibição do alerta
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -46,7 +47,7 @@ function Header({ onCartoesAvaliarChange }) {
       }
     };
 
-    const intervalId = setInterval(fetchData, 4000);
+    const intervalId = setInterval(fetchData, 100);
 
     return () => clearInterval(intervalId);
   }, [location.pathname]);
@@ -56,8 +57,7 @@ function Header({ onCartoesAvaliarChange }) {
 
     switch (paginaAtual) {
       case "/home":
-        alert("Email ou senha inválidos");
-        navigate("/", {});
+        setShowAlert(true); // Exibindo o alerta
         break;
       case "/cartoes":
         navigate("/home", {});
@@ -80,9 +80,15 @@ function Header({ onCartoesAvaliarChange }) {
         console.log("URL desconhecido");
         break;
     }
+  };
 
-    // Exemplo de uso em algum evento de clique, por exemplo:
-    // <button onClick={analisarUrlParaRetorno}>Voltar</button>
+  // Função para navegar após clicar no botão "sim" do alerta
+  const handleAlertConfirm = () => {
+    navigate("/", {}); // Navegar de volta para a página inicial
+    setShowAlert(false); // Esconder o alerta
+  };
+  const handleAlertNegate = () => {
+    setShowAlert(false); // Esconder o alerta
   };
 
   return (
@@ -105,6 +111,14 @@ function Header({ onCartoesAvaliarChange }) {
           </span>
         </div>
       </div>
+      {/* Alerta */}
+      {showAlert && (
+        <div>
+          <p>Tem certeza que deseja retornar ao login?</p>
+          <button onClick={handleAlertConfirm}>Sim</button>
+          <button onClick={handleAlertNegate}>Nao</button>
+        </div>
+      )}
     </div>
   );
 }

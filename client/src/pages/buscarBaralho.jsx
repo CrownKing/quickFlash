@@ -11,38 +11,55 @@ import deckPhoto from "../icons/deckBox.png";
 
 function BuscarBaralho() {
   const navigate = useNavigate();
-  const [baralhoId, setBaralhoId] = useState(0);
-  const [baralhoRetornado, setBaralhoRetornado] = useState({});
-  const [showBaralhoLista, setShowBaralhoLista] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(0);
+  const [listAllBaralhos, setlistAllBaralhos] = useState([]);
+  const [listBaralhosRetornados, setlistBaralhosRetornados] = useState([]);
+  const [showBaralhoLista, setShowBaralhoLista] = useState(true);
   const [curtido, setCurtido] = useState(false);
   const [nenhumBaralhoEncontrado, setEncontro] = useState(false);
 
   const search = () => {
+    debugger;
+    const baralhoIds = listBaralhosRetornados.map(
+      (baralho) => baralho.baralhoId
+    );
     var data = JSON.parse(localStorage.getItem("loginData"));
     Axios.post("http://localhost:3001/api/baralhos/curtidos/getBaralho", {
-      baralhoId: baralhoId,
+      baralhoId: searchTerm,
     }).then((response) => {
       if (response.data.length === 0) {
         setEncontro(true);
       } else {
         setEncontro(false);
-        setBaralhoRetornado(response.data[0]);
+        const baralhos = response.data.map((baralho) => ({
+          ...baralho, //set5tando uma variavel curtido no baralho apenas para exibir o coração cheio ou nao no front
+          curtido: false,
+        }));
+
         setShowBaralhoLista(true);
         Axios.post("http://localhost:3001/api/baralhos/getCurtido", {
-          baralhoId: baralhoId,
+          baralhoIds: baralhoIds,
           usuarioId: data[0].usuarioId,
         }).then((response) => {
           if (response.data.length > 0) {
-            setCurtido(true);
+            const baralhosCurtidosIds = response.data.map(
+              (curtido) => curtido.baralhoId
+            );
+            const baralhosAtualizados = baralhos.map((baralho) => ({
+              ...baralho,
+              curtido: baralhosCurtidosIds.includes(baralho.baralhoId),
+            }));
+            setlistBaralhosRetornados(baralhosAtualizados);
           } else {
-            setCurtido(false);
+            setlistBaralhosRetornados(baralhos);
           }
         });
       }
     });
   };
 
-  const like = () => {
+  const like = (index) => {
+    let baralhoId = listBaralhosRetornados[index].baralhoId;
     var auxiliarLikeButton = curtido;
     var data = JSON.parse(localStorage.getItem("loginData"));
     setCurtido(!curtido);
@@ -66,22 +83,40 @@ function BuscarBaralho() {
       });
     }
   };
+  useEffect(() => {
+    Axios.get("http://localhost:3001/api/baralhos/getBaralhos").then(
+      (response) => {
+        const baralhos = response.data.map((baralho) => ({
+          ...baralho, //set5tando uma variavel curtido no baralho apenas para exibir o coração cheio ou nao no front
+          curtido: false,
+        }));
+        setlistBaralhosRetornados(baralhos);
+        setlistAllBaralhos(baralhos);
+      }
+    );
+  }, []);
   return (
     <div>
       <Header />
       <div className="allCompartDiv">
         <div className="inputDiv">
           <input
-            type="number"
             className="input"
-            onChange={(e) => setBaralhoId(e.target.value)}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
           <button onClick={search}>
             <FontAwesomeIcon icon={faMagnifyingGlass}> </FontAwesomeIcon>
           </button>
         </div>
-        {showBaralhoLista && (
-          <div className="deckDiv">
+        {nenhumBaralhoEncontrado && (
+          <div>
+            <span> Não encontramos nenhum baralho com esse ID</span>
+          </div>
+        )}
+        {listBaralhosRetornados.map((baralho, index) => (
+          <div key={index} className="deckDiv">
+            {" "}
+            {/* Move a div de deckDiv para dentro do map */}
             <div className="deckPhoto">
               <div>
                 <img src={deckPhoto} alt="Logo" className="deckLogo" />
@@ -89,35 +124,26 @@ function BuscarBaralho() {
             </div>
             <div className="deckName">
               <div className="divBGNome">
-                <span> {baralhoRetornado.baralhoNome}</span>
+                <span>{baralho.baralhoNome}</span>
               </div>
-              {!curtido && (
+              {!baralho.curtido && (
                 <FontAwesomeIcon
                   icon={faHeart}
                   className="icone"
-                  onClick={like}
-                >
-                  {" "}
-                </FontAwesomeIcon>
+                  onClick={() => like(index)} // Correção aqui
+                />
               )}
-              {curtido && (
+              {baralho.curtido && (
                 <FontAwesomeIcon
                   icon={faHeart}
                   className="icone"
-                  onClick={like}
+                  onClick={() => like(index)} // Correção aqui
                   style={{ color: "#dc1818" }}
-                >
-                  {" "}
-                </FontAwesomeIcon>
+                />
               )}
             </div>
           </div>
-        )}
-        {nenhumBaralhoEncontrado && (
-          <div>
-            <span> Não encontramos nenhum baralho com esse ID</span>
-          </div>
-        )}
+        ))}
       </div>
       <NavBar />
     </div>

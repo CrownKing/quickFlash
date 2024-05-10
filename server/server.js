@@ -42,11 +42,26 @@ app.post("/api/baralhos/curtidos", (req, res) => {
 
 app.post("/api/baralhos/curtidos/getBaralho", (req, res) => {
   const baralhoId = req.body.baralhoId;
-  const sqlSelectBaralho = "SELECT * FROM baralho WHERE baralhoId = ?;";
-  db.query(sqlSelectBaralho, [baralhoId], (err, result) => {
+  const searchTerm = req.body.baralhoId;
+  const searchValue = "%" + searchTerm + "%";
+  const sqlSelectBaralho =
+    "SELECT * FROM baralho WHERE baralhoId = ? OR baralhoNome LIKE ?;";
+  db.query(sqlSelectBaralho, [baralhoId, searchValue], (err, result) => {
     if (err) {
       console.log(err);
       res.send(err.toString());
+    }
+    res.send(result);
+  });
+});
+
+app.get("/api/baralhos/getBaralhos", (req, res) => {
+  const sqlGetAllBaralhos = "SELECT * FROM baralho";
+  db.query(sqlGetAllBaralhos, (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Erro no servidor");
+      return;
     }
     res.send(result);
   });
@@ -134,12 +149,12 @@ app.post("/api/baralhos/curtirBaralho", (req, res) => {
 
 app.post("/api/baralhos/getCurtido", (req, res) => {
   const usuarioId = req.body.usuarioId;
-  const baralhoId = req.body.baralhoId;
+  const baralhoIds = req.body.baralhoIds;
   const getCurtir =
-    "SELECT * FROM usuariobaralho WHERE usuarioId =? AND baralhoId =?;";
+    "SELECT * FROM usuariobaralho WHERE usuarioId = ? AND baralhoId IN (?);";
   console.log(usuarioId);
-  console.log(baralhoId);
-  db.query(getCurtir, [usuarioId, baralhoId], (err, result) => {
+  console.log(baralhoIds);
+  db.query(getCurtir, [usuarioId, baralhoIds], (err, result) => {
     if (err) {
       console.log(err);
       res.send(err.toString());

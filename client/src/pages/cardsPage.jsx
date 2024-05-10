@@ -25,6 +25,7 @@ function CardsPage() {
   useEffect(() => {
     var data = JSON.parse(localStorage.getItem("loginData"));
     var baralhoId = localStorage.getItem("baralhoId");
+    var deck = JSON.parse(localStorage.getItem("deck"));
     setBaralhoId(baralhoId);
     var cards;
     Axios.post("http://localhost:3001/api/cards", {
@@ -33,7 +34,7 @@ function CardsPage() {
     }).then((response) => {
       setBaralho(response.data);
       cards = response.data;
-      if (cards.length < 15) {
+      if (cards.length < 15 && data[0].usuarioId === deck.criadorId) { //Apenas o criador do baralho pode criar cartões, e so da pra criar um cartão baralhos que tem menos de 15 cartões
         setCriacao(true);
       }
     });
