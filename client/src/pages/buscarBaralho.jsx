@@ -19,7 +19,6 @@ function BuscarBaralho() {
   const [nenhumBaralhoEncontrado, setEncontro] = useState(false);
 
   const search = () => {
-    debugger;
     const baralhoIds = listBaralhosRetornados.map(
       (baralho) => baralho.baralhoId
     );

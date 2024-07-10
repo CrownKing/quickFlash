@@ -22,6 +22,7 @@
     width: 80%;
     display: flex;
     background-color: #C9CBCD;
+    max-width: 140px;
 }
 
 .deckName {

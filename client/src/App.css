@@ -12,6 +12,11 @@
   display: grid;
     margin: 48px;
 }
+img{
+  object-fit: contain;
+  max-width: 100%;
+  height: auto;
+}
 .inputs input{
   margin: 0px;
   border: solid 1px var(--primary);

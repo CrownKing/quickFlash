@@ -65,50 +65,61 @@ function FlashCardPage() {
       <Header />
       <div className="allflashCardDiv">
         <div className="cardDiv">
-          <div onClick={changeFlashCardMinus} className="iconDiv">
-            <FontAwesomeIcon icon={faChevronLeft} size="2x"></FontAwesomeIcon>
+          <div className="errorDiv">
+            <span style={{ fontWeight: 600 }}>Encontrou algum erro?</span>
+            <div className="divButton">
+              <span className="errorButton">Enviar para avaliação</span>
+            </div>
           </div>
-          {!showResposta && (
-            <div className="flashCardTextDiv">
-              <span>{cardAtual.pergunta}</span>
-              <div className="divButton">
-                <button onClick={clickButtonResposta}>Resposta</button>
-              </div>
+          <div className="cardContent">
+            <div onClick={changeFlashCardMinus} className="iconDiv">
+              <FontAwesomeIcon icon={faChevronLeft} size="2x"></FontAwesomeIcon>
             </div>
-          )}
-          {showResposta && (
-            <div className="flashCardTextDiv">
-              <span>{cardAtual.resposta}</span>
-              <div className="divButton">
-                <button
-                  onClick={(e) => clickButtonAvaliarResposta(e.target.id)}
-                  id="1"
-                >
-                  1
-                </button>
-                <button
-                  onClick={(e) => clickButtonAvaliarResposta(e.target.id)}
-                  id="2"
-                >
-                  2
-                </button>
-                <button
-                  onClick={(e) => clickButtonAvaliarResposta(e.target.id)}
-                  id="3"
-                >
-                  3
-                </button>
-                <button
-                  onClick={(e) => clickButtonAvaliarResposta(e.target.id)}
-                  id="4"
-                >
-                  4
-                </button>
+            {!showResposta && (
+              <div className="flashCardTextDiv">
+                <span>{cardAtual.pergunta}</span>
+                <div className="divButton">
+                  <button onClick={clickButtonResposta}>Resposta</button>
+                </div>
               </div>
+            )}
+            {showResposta && (
+              <div className="flashCardTextDiv">
+                <span>{cardAtual.resposta}</span>
+                <div className="divButton">
+                  <button
+                    onClick={(e) => clickButtonAvaliarResposta(e.target.id)}
+                    id="1"
+                  >
+                    1
+                  </button>
+                  <button
+                    onClick={(e) => clickButtonAvaliarResposta(e.target.id)}
+                    id="2"
+                  >
+                    2
+                  </button>
+                  <button
+                    onClick={(e) => clickButtonAvaliarResposta(e.target.id)}
+                    id="3"
+                  >
+                    3
+                  </button>
+                  <button
+                    onClick={(e) => clickButtonAvaliarResposta(e.target.id)}
+                    id="4"
+                  >
+                    4
+                  </button>
+                </div>
+              </div>
+            )}
+            <div onClick={changeFlashCardPlus} className="iconDiv">
+              <FontAwesomeIcon
+                icon={faChevronRight}
+                size="2x"
+              ></FontAwesomeIcon>
             </div>
-          )}
-          <div onClick={changeFlashCardPlus} className="iconDiv">
-            <FontAwesomeIcon icon={faChevronRight} size="2x"></FontAwesomeIcon>
           </div>
         </div>
         <NavBar />

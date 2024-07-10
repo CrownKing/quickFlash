@@ -15,6 +15,18 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 
+app.get("/check-mysql-version", (req, res) => {
+  db.query("SELECT VERSION() as version", (error, results, fields) => {
+    if (error) {
+      console.log("deu erro");
+      res.status(500).json({ error: error.message });
+    } else {
+      const mysqlVersion = results[0].version;
+      res.json({ mysqlVersion });
+    }
+  });
+});
+
 app.post("/api/baralhos", (req, res) => {
   const criadorId = req.body.criadorId;
   const sqlSelectBaralho = "SELECT * FROM baralho WHERE criadorId = ?;";
@@ -127,21 +139,54 @@ app.post("/api/baralhos/curtirBaralho", (req, res) => {
         res.send([]);
         return;
       }
+      const checkExists =
+        "SELECT 1 FROM usuarioflashcard WHERE caixaId = ? AND usuarioId = ? AND cardId = ?";
       const insertCardUsuarioCard =
-        "INSERT INTO usuarioflashcard (caixaId, usuarioId, cardId, ) VALUES (?,?,?)"; // nao pode ser insert, visto que agora ja existe a chave quando se curte o baralho, tem q ser um update
-      for (let i = 0; i < valoresCardId.length; i++) {
-        // faz um insert para cada id de card contido no baralho criado
+        "INSERT INTO usuarioflashcard (caixaId, usuarioId, cardId) VALUES (?, ?, ?)";
+      const updateCardUsuarioCard =
+        "UPDATE usuarioflashcard SET caixaId = ? WHERE usuarioId = ? AND cardId = ?";
+      valoresCardId.forEach((cardId) => {
         db.query(
-          insertCardUsuarioCard,
-          [baralhoId, usuarioId, valoresCardId[i]],
-          (eror, resultInsert2) => {
-            if (eror) {
-              console.log(eror);
-              res.send(eror.toString());
+          checkExists,
+          [baralhoId, usuarioId, cardId],
+          (checkError, checkResult) => {
+            if (checkError) {
+              console.log(checkError);
+              res.send(checkError.toString());
+              return;
+            }
+            console.log("query executada");
+            console.log(checkResult);
+            if (checkResult.length > 0) {
+              // Registro já existe, realizar UPDATE
+              db.query(
+                updateCardUsuarioCard,
+                [baralhoId, usuarioId, cardId],
+                (updateError, updateResult) => {
+                  if (updateError) {
+                    console.log(updateError);
+                    res.send(updateError.toString());
+                    return;
+                  }
+                }
+              );
+            } else {
+              // Registro não existe, realizar INSERT
+              db.query(
+                insertCardUsuarioCard,
+                [baralhoId, usuarioId, cardId],
+                (insertError, insertResult) => {
+                  if (insertError) {
+                    console.log(insertError);
+                    res.send(insertError.toString());
+                    return;
+                  }
+                }
+              );
             }
           }
         );
-      }
+      });
     });
     res.send(result);
   });
@@ -166,14 +211,144 @@ app.post("/api/baralhos/getCurtido", (req, res) => {
 app.post("/api/baralhos/deslikeBaralho", (req, res) => {
   const usuarioId = req.body.usuarioId;
   const baralhoId = req.body.baralhoId;
+  const sqlSelectCards = "SELECT cardId FROM flashcard WHERE baralhoId = ?";
+  const deleteAllUsuarioLikeFlashcard =
+    "DELETE FROM usuarioflashcard WHERE cardId IN (?) AND usuarioId = ?";
   const deslike =
-    "DELETE FROM usuariobaralho where usuarioId=? AND baralhoId=?;";
-  db.query(deslike, [usuarioId, baralhoId], (err, result) => {
-    if (err) {
-      console.log(err);
-      res.send(err.toString());
+    "DELETE FROM usuariobaralho WHERE usuarioId = ? AND baralhoId = ?";
+
+  db.query(sqlSelectCards, [baralhoId], (error, resultado) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send(error.toString());
     }
-    res.send(result);
+
+    const valoresCardId = resultado.map((row) => row.cardId);
+    console.log("IDs dos cartões:", valoresCardId);
+
+    // Verifique se há cartões para excluir
+    if (valoresCardId.length > 0) {
+      db.query(deslike, [usuarioId, baralhoId], (err, result) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).send(err.toString());
+        }
+
+        db.query(
+          deleteAllUsuarioLikeFlashcard,
+          [valoresCardId, usuarioId],
+          (errorUsuarioFlashcard) => {
+            if (errorUsuarioFlashcard) {
+              console.log(errorUsuarioFlashcard);
+              return res.status(500).send(errorUsuarioFlashcard.toString());
+            } else {
+              return res.send("Deslike concluído");
+            }
+          }
+        );
+      });
+    } else {
+      return res.send("Nenhum cartão para descurtir");
+    }
+  });
+});
+
+app.delete("/api/baralhos/deleteBaralho/:baralhoId", (req, res) => {
+  const baralhoId = req.params.baralhoId;
+  const deleteAllUsuarioBaralho =
+    " DELETE FROM usuariobaralho WHERE baralhoId = ?;";
+  const deleteAllUsuarioLikeFlashcard =
+    "DELETE FROM usuarioflashcard WHERE cardId IN (?)";
+  const deleteAllUsuarioAvaliaFlashcard =
+    "DELETE FROM usuarioavaliaflashcard where cardId IN (?)";
+  const deleteBaralho = "DELETE from baralho where baralhoId = ?";
+  const deleteAllCards = "DELETE FROM flashcard WHERE baralhoId = ?;";
+  const sqlSelectCards = "SELECT cardId FROM flashcard WHERE baralhoId = ?";
+
+  db.query(sqlSelectCards, [baralhoId], (error, resultado) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send(error.toString());
+    }
+
+    const valoresCardId = resultado.map((row) => row.cardId);
+    console.log("IDs dos cartões:", valoresCardId);
+
+    // Verifique se há cartões para excluir
+    if (valoresCardId.length > 0) {
+      const cardsId = valoresCardId.join(",");
+
+      db.query(
+        deleteAllUsuarioLikeFlashcard,
+        [cardsId],
+        (errorUsuarioFlashcard) => {
+          console.log(cardsId);
+          if (errorUsuarioFlashcard) {
+            console.log(errorUsuarioFlashcard);
+            return res.status(500).send(errorUsuarioFlashcard.toString());
+          }
+
+          db.query(deleteAllUsuarioBaralho, [baralhoId], (errorDeleteAll) => {
+            if (errorDeleteAll) {
+              console.log(errorDeleteAll);
+              return res.status(500).send(errorDeleteAll.toString());
+            }
+            db.query(
+              deleteAllCards,
+              [baralhoId],
+              (errorDeleteAllUsuarioBaralho) => {
+                if (errorDeleteAllUsuarioBaralho) {
+                  console.log(errorDeleteAllUsuarioBaralho);
+                  return res
+                    .status(500)
+                    .send(errorDeleteAllUsuarioBaralho.toString());
+                }
+                db.query(
+                  deleteAllUsuarioAvaliaFlashcard,
+                  [cardsId],
+                  (errorDeleteAllUsuarioAvaliaFlashcard) => {
+                    if (errorDeleteAllUsuarioAvaliaFlashcard) {
+                      console.log(errorDeleteAllUsuarioAvaliaFlashcard);
+                      return res
+                        .status(500)
+                        .send(errorDeleteAllUsuarioAvaliaFlashcard.toString());
+                    }
+                    db.query(
+                      deleteBaralho,
+                      [baralhoId],
+                      (errorDeleteBaralho) => {
+                        if (errorDeleteBaralho) {
+                          console.log(errorDeleteBaralho);
+                          return res
+                            .status(500)
+                            .send(errorDeleteBaralho.toString());
+                        }
+                        res.send("Baralho deletado com sucesso.");
+                      }
+                    );
+                  }
+                );
+              }
+            );
+          });
+        }
+      );
+    } else {
+      // Se não há cartões para excluir, apenas execute a exclusão do baralho e usuários do baralho
+      db.query(deleteAllCards, [baralhoId], (errorDeleteAll) => {
+        if (errorDeleteAll) {
+          console.log(errorDeleteAll);
+          return res.status(500).send(errorDeleteAll.toString());
+        }
+        db.query(deleteBaralho, [baralhoId], (errorDeleteBaralho) => {
+          if (errorDeleteBaralho) {
+            console.log(errorDeleteBaralho);
+            return res.status(500).send(errorDeleteBaralho.toString());
+          }
+          res.send("Baralho deletado com sucesso.");
+        });
+      });
+    }
   });
 });
 

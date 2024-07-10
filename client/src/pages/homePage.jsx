@@ -8,6 +8,8 @@ import CreateorImportDeckModal from "../components/createorImportDeckModal.jsx";
 import { useNavigate } from "react-router-dom";
 import Axios from "axios";
 import { BookLoader } from "react-awesome-loaders";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeartCrack } from "@fortawesome/free-solid-svg-icons";
 
 function HomePage() {
   const [listaBaralhos, setBaralho] = useState([]);
@@ -24,8 +26,24 @@ function HomePage() {
   const closeModal = () => {
     setCriaBaralhoClickado(false);
   };
+  const dislike = (baralhoId, criadorId) => {
+    var data = localStorage.getItem("loginData");
+    data = JSON.parse(data);
+    if (criadorId != data[0].usuarioId) {
+      Axios.post("http://localhost:3001/api/baralhos/deslikeBaralho", {
+        usuarioId: data[0].usuarioId,
+        baralhoId: baralhoId,
+      }).then((response) => {});
+    } else {
+      Axios.delete(
+        `http://localhost:3001/api/baralhos/deleteBaralho/${baralhoId}`,
+        {}
+      ).then((response) => {});
+    }
+  };
 
   const getUserData = async () => {
+    setLoad(true);
     var data = localStorage.getItem("loginData");
     data = JSON.parse(data);
     await setUserData(data[0]);
@@ -51,19 +69,22 @@ function HomePage() {
             let qntBaralho = getBaralhosAux.length;
             if (qntBaralho >= 3) {
               setShowCriaBaralho(false);
+              setTimeout(() => setLoad(false), 1000);
             } else {
               setShowCriaBaralho(true);
+              setTimeout(() => setLoad(false), 1000);
             }
           });
         } else {
           setBaralho(getBaralhosAux);
           if (getBaralhosAux.length >= 3) {
             setShowCriaBaralho(false);
+            setTimeout(() => setLoad(false), 1000);
           } else {
             setShowCriaBaralho(true);
+            setTimeout(() => setLoad(false), 1000);
           }
         }
-        setTimeout(() => setLoad(false), 3000);
       });
     });
   };
@@ -82,60 +103,100 @@ function HomePage() {
   };
   return (
     <div>
-      {showLoad && (
-        <BookLoader
-          background={"linear-gradient(135deg, #6066FA, #4645F6)"}
-          desktopSize={"100px"}
-          mobileSize={"80px"}
-          textColor={"#4645F6"}
-        />
-      )}
-      {!showLoad && (
-        <>
-          <Header />
-          <div className="App">
-            {showCriaBaralho && (
-              <div className="deckDiv" onClick={criaBaralho}>
-                <div className="deckPhoto">
-                  <div>
-                    <img src={addBaralho} alt="Logo" />
-                  </div>
-                </div>
-                <div className="deckName">
-                  <div>
-                    <span>Criar novo Baralho</span>
-                  </div>
+      <div
+        className="overlay"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundColor: "rgba(0, 0, 0, 0.5)", // Fundo semi-transparente para escurecer a tela
+          display: showLoad ? "flex" : "none", // Mostra o overlay apenas se showLoad for true
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 1000, // Z-index alto para garantir que cubra outros elementos
+        }}
+      >
+        {/* Componente de loader */}
+        {showLoad && (
+          <BookLoader
+            background={"linear-gradient(135deg, #557942, #8AC26D)"}
+            desktopSize={"30px"}
+            mobileSize={"80px"}
+            textColor={"#8AC26D"}
+          />
+        )}
+      </div>
+      <>
+        <Header />
+        <div className="App">
+          {showCriaBaralho && (
+            <div className="deckDiv" onClick={criaBaralho}>
+              <div className="deckPhoto">
+                <div>
+                  <img src={addBaralho} alt="Logo" />
                 </div>
               </div>
-            )}
-            {listaBaralhos.map((deck) => {
-              return (
+              <div className="deckName">
+                <div>
+                  <span>Criar novo Baralho</span>
+                </div>
+              </div>
+            </div>
+          )}
+          {listaBaralhos.map((deck) => {
+            return (
+              <div className="deckDiv">
                 <div
-                  className="deckDiv"
+                  className="deckPhoto"
                   onClick={() =>
                     selecionaBaralho(deck.baralhoId, deck.baralhoNome, deck)
                   }
                 >
-                  <div className="deckPhoto">
-                    <div>
-                      <img src={deckPhoto} alt="Logo" />
-                    </div>
-                  </div>
-                  <div className="deckName">
-                    <div>
-                      <span>{deck.baralhoNome}</span>
-                    </div>
+                  <div>
+                    <img src={deckPhoto} alt="Logo" />
                   </div>
                 </div>
-              );
-            })}
-            {criaBralhoClickado && (
-              <CreateorImportDeckModal fecha={closeModal} />
-            )}
-            <NavBar />
-          </div>
-        </>
-      )}
+                <div
+                  className="deckName"
+                  onClick={() =>
+                    selecionaBaralho(deck.baralhoId, deck.baralhoNome, deck)
+                  }
+                >
+                  <div>
+                    <span>{deck.baralhoNome}</span>
+                  </div>
+                  <div
+                    style={{
+                      width: "10%",
+                      marginLeft: "16px",
+                    }}
+                  >
+                    <button
+                      style={{
+                        border: "none",
+                        backgroundColor: "transparent",
+                      }}
+                    >
+                      <FontAwesomeIcon
+                        icon={faHeartCrack}
+                        style={{
+                          color: "#dc1818",
+                          backgroundColor: "transparent",
+                        }}
+                        onClick={() => dislike(deck.baralhoId, deck.criadorId)} // Correção aqui
+                      />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          {criaBralhoClickado && <CreateorImportDeckModal fecha={closeModal} />}
+          <NavBar />
+        </div>
+      </>
     </div>
   );
 }
