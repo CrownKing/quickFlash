@@ -12,6 +12,7 @@ function AvaliarCardModal({ card }) {
       nota: nota,
     }).then((response) => {});
   };
+  console.log(card);
   return (
     <>
       <div className="modal-overlay"></div>

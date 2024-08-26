@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 import "../pages_css/flashcardPage.css";
 import { useLocation } from "react-router-dom";
 import NavBar from "../components/navBar";
@@ -13,6 +14,7 @@ function FlashCardPage() {
   const [showResposta, setResposta] = useState(false);
   const [index, setIndex] = useState(0);
   const location = useLocation();
+  const navigate = useNavigate();
 
   let allBaralho = location.state.baralho;
   let indexCardSelecionado = location.state.index;
@@ -35,13 +37,16 @@ function FlashCardPage() {
       usuarioId,
       cardId,
       dataResposta,
-    }).then((response) => {});
+    }).then((response) => {
+      changeFlashCardPlus();
+    });
     setResposta(false);
   };
 
   const changeFlashCardPlus = () => {
     if (index === allBaralho.length - 1) {
-      setIndex(0);
+      alert("Você finalizou todos os seus cartões!!!! Vá descansar um pouco.");
+      navigate("/home", {});
     } else {
       let aux = index + 1;
       setIndex(aux);

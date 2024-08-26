@@ -21,7 +21,9 @@ function CreateorImportDeckModal({ fecha }) {
           baralhoNome: nomeBaralho,
           usuarioId: data[0].usuarioId,
         })
-          .then((response) => {})
+          .then((response) => {
+            close();
+          })
           .catch((error) => {
             console.error(
               "Erro ao fazer a solicitação para o servidor:",

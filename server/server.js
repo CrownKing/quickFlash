@@ -57,7 +57,7 @@ app.post("/api/baralhos/curtidos/getBaralho", (req, res) => {
   const searchTerm = req.body.baralhoId;
   const searchValue = "%" + searchTerm + "%";
   const sqlSelectBaralho =
-    "SELECT * FROM baralho WHERE baralhoId = ? OR baralhoNome LIKE ?;";
+    "SELECT * FROM baralho WHERE baralhoId = ? OR baralhoNome LIKE ? AND baralhoBom = 1;";
   db.query(sqlSelectBaralho, [baralhoId, searchValue], (err, result) => {
     if (err) {
       console.log(err);
@@ -69,6 +69,18 @@ app.post("/api/baralhos/curtidos/getBaralho", (req, res) => {
 
 app.get("/api/baralhos/getBaralhos", (req, res) => {
   const sqlGetAllBaralhos = "SELECT * FROM baralho";
+  db.query(sqlGetAllBaralhos, (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Erro no servidor");
+      return;
+    }
+    res.send(result);
+  });
+});
+
+app.get("/api/baralhos/getBaralhosCompartilhados", (req, res) => {
+  const sqlGetAllBaralhos = "SELECT * FROM baralho WHERE baralhoBom = 1";
   db.query(sqlGetAllBaralhos, (err, result) => {
     if (err) {
       console.error(err);
@@ -174,7 +186,7 @@ app.post("/api/baralhos/curtirBaralho", (req, res) => {
               // Registro não existe, realizar INSERT
               db.query(
                 insertCardUsuarioCard,
-                [baralhoId, usuarioId, cardId],
+                [1, usuarioId, cardId],
                 (insertError, insertResult) => {
                   if (insertError) {
                     console.log(insertError);
@@ -248,7 +260,7 @@ app.post("/api/baralhos/deslikeBaralho", (req, res) => {
         );
       });
     } else {
-      return res.send("Nenhum cartão para descurtir");
+      return res.send("Nenhum baralho para descurtir");
     }
   });
 });
@@ -469,12 +481,28 @@ app.post("/api/cards/selecionaCardsParaAvaliacao", (req, res) => {
   });
 });
 
+app.post("/api/cards/selecionaCardsAvaliados", (req, res) => {
+  const usuarioId = req.body.usuarioId;
+  const sqlSelectCards = `SELECT * FROM usuarioavaliaflashcard WHERE usuarioId = ? AND avaliacao IS NOT NULL AND avaliacao != ''`;
+  db.query(sqlSelectCards, [usuarioId], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Erro no servidor");
+      return;
+    }
+    res.send(result);
+  });
+});
+
 app.post("/api/cards/setAvaliacao", (req, res) => {
   const cardId = req.body.cardId;
   const avaliacao = req.body.avaliacao;
   const nota = req.body.nota;
   const sqlSetAvaliacao = `UPDATE usuarioavaliaflashcard SET avaliacao = ? WHERE cardId = ?`;
   const sqlSetNota = "UPDATE flashcard SET cardBom = ? WHERE cardId = ?";
+  const sqlSelectCards = "SELECT * FROM flashcard where baralhoId = ?";
+  const sqlSelectBaralhoId = "SELECT baralhoId FROM flashcard where cardId = ?";
+  const sqlUpdateBaralhoBom = "UPDATE baralho SET baralhoBom = ? WHERE baralhoId = ?";
   db.query(sqlSetAvaliacao, [avaliacao, cardId], (err, result) => {
     if (err) {
       console.error(err);
@@ -488,9 +516,52 @@ app.post("/api/cards/setAvaliacao", (req, res) => {
       res.status(500).send("Erro no servidor");
       return;
     }
-    res.send(result);
+    db.query(sqlSelectBaralhoId, [cardId], (err, baralhoId) => {//selecionei o baralhoId do card q avaliei
+      if (err) {
+        console.error(err);
+        res.status(500).send("Erro no servidor");
+        return;
+      }
+      console.log(baralhoId[0].baralhoId)
+      db.query(sqlSelectCards, [baralhoId[0].baralhoId], (err, allCards) => {//busquei todos os cards do baralho daquele card
+        //se todos os cards forem bom, marcar o baralho como bom
+        if(verificarTodosCardsBons(allCards[0])){
+          db.query(sqlUpdateBaralhoBom, [1,baralhoId[0].baralhoId], (err, baralhoId) => {//mudo o baralho para bom
+            if (err) {
+              console.error(err);
+              res.status(500).send("Erro no servidor");
+              return;
+            }
+          
+          })
+        }
+        else{
+          db.query(sqlUpdateBaralhoBom, [0,baralhoId[0].baralhoId], (err, baralhoId) => {//mudo o baralho para ruim
+            if (err) {
+              console.error(err);
+              res.status(500).send("Erro no servidor");
+              return;
+            }
+          })
+        }
+        
+      })
+      res.send(result);
+    });
   });
 });
+
+function verificarTodosCardsBons(cards) {
+  // Itera sobre cada objeto no array
+  for (let card of cards) {
+    // Se encontrar algum card com cardBom diferente de 1, retorna false
+    if (card.cardBom !== 1) {
+      return false;
+    }
+  }
+  // Se todos os cards tiverem cardBom igual a 1, retorna true
+  return true;
+}
 
 app.post("/api/cards/criar", (req, res) => {
   const baralhoId = req.body.baralhoId;
@@ -533,52 +604,6 @@ app.post("/api/cards/criar", (req, res) => {
   );
 });
 
-// app.post("/api/flashcard/respondeCard", (req, res) => {
-//   const nota = req.body.resposta; // A nota varia de 1 a 4, nota 1 significa erro, logo, a caixa deve ser a 1 pois significa que o card sera repetido todos os dias
-//   const usuarioId = req.body.usuarioId;
-//   const cardId = req.body.cardId;
-//   const dataResposta = req.body.dataResposta;
-//   // ERROR GRAVE, TENHO QUE ANALISAR SE O CARTAO JA EXISTE ANTES DE TENTAR INSERIR NO CARD
-//   const responde =
-//     "INSERT INTO usuarioflashcard (caixaId, usuarioId, cardId, dataProximaResposta) VALUES (?,?,?,?);";
-//   let pontuacao = 0;
-
-//   switch (nota) {
-//     case 1:
-//       pontuacao = 0;
-//       dataResposta.setDate(dataResposta.getDate() + 1);
-//       break;
-//     case 2:
-//       pontuacao = 0;
-//       dataResposta.setDate(dataResposta.getDate() + 3);
-//       break;
-//     case 3:
-//       pontuacao = 1;
-//       dataResposta.setDate(dataResposta.getDate() + 7);
-//       break;
-//     case 4:
-//       pontuacao = 2;
-//       dataResposta.setDate(dataResposta.getDate() + 14);
-//       break;
-//   }
-//   db.query(responde, [nota, usuarioId, cardId, dataResposta], (err, result) => {
-//     if (err) {
-//       console.log(err);
-//       res.send(err.toString());
-//     }
-//     const atualizaPts =
-//       "UPDATE usuario SET pontos = pontos + ? WHERE usuarioId = ?;";
-//     db.query(atualizaPts, [pontuacao, usuarioId], (err, result) => {
-//       if (err) {
-//         console.log(err);
-//         res.send(err.toString());
-//       }
-//       res.send(result);
-//     });
-//     res.send(result);
-//   });
-// });
-
 app.post("/api/flashcard/respondeCard", (req, res) => {
   const nota = req.body.resposta;
   const usuarioId = req.body.usuarioId;
@@ -594,34 +619,7 @@ app.post("/api/flashcard/respondeCard", (req, res) => {
 
   let pontuacao = 0;
   let varDataAux;
-
-  switch (nota) {
-    case "1":
-      console.log("entrei 1");
-      pontuacao = 0;
-      varDataAux = dataResposta.getDate();
-      dataResposta.setDate(dataResposta.getDate() + 1);
-      break;
-    case "2":
-      console.log("entrei 2");
-      pontuacao = 0;
-      varDataAux = dataResposta.getDate();
-      dataResposta.setDate(dataResposta.getDate() + 3);
-      break;
-    case "3":
-      console.log("entrei 3");
-      pontuacao = 1;
-      varDataAux = dataResposta.getDate();
-      dataResposta.setDate(dataResposta.getDate() + 7);
-      break;
-    case "4":
-      console.log("entrei 4");
-      pontuacao = 2;
-      varDataAux = dataResposta.getDate();
-      dataResposta.setDate(dataResposta.getDate() + 14);
-      break;
-  }
-  console.log(varDataAux);
+  let caixaId = 0;
   db.query(selectQuery, [usuarioId, cardId], (err, rows) => {
     if (err) {
       console.log(err);
@@ -630,6 +628,74 @@ app.post("/api/flashcard/respondeCard", (req, res) => {
     }
     if (rows && rows.length > 0) {
       // Se a combinação de caixaId, usuarioId e cardId já existe, execute o UPDATE
+      console.log(nota);
+      console.log(rows[0]);
+      if (nota == 1 || nota == 2) {
+        if (rows[0].caixaId === 1) {
+          console.log("entrei erro 0");
+          caixaId = rows[0].caixaId;
+          varDataAux = dataResposta.getDate();
+          dataResposta.setDate(dataResposta.getDate() + 1);
+        } else {
+          caixaId = rows[0].caixaId - 1;
+          switch (caixaId) {
+            case null:
+              console.log("entrei erro 1");
+              varDataAux = dataResposta.getDate();
+              dataResposta.setDate(dataResposta.getDate() + 1);
+              break;
+            case 1:
+              console.log("entrei erro 2");
+              varDataAux = dataResposta.getDate();
+              dataResposta.setDate(dataResposta.getDate() + 1);
+              break;
+            case 2:
+              console.log("entrei erro 3");
+              varDataAux = dataResposta.getDate();
+              dataResposta.setDate(dataResposta.getDate() + 3);
+              break;
+            case 3:
+              console.log("entrei erro 4");
+              varDataAux = dataResposta.getDate();
+              dataResposta.setDate(dataResposta.getDate() + 7);
+              break;
+          }
+        }
+      } else {
+        //nota 3 ou 4
+        if (rows[0].caixaId === 4) {
+          console.log("entrei acerto 0");
+          caixaId = rows[0].caixaId;
+          varDataAux = dataResposta.getDate();
+          dataResposta.setDate(dataResposta.getDate() + 14);
+        } else {
+          caixaId = rows[0].caixaId + 1;
+          switch (caixaId) {
+            case null:
+              console.log("entrei acerto 1");
+              varDataAux = dataResposta.getDate();
+              dataResposta.setDate(dataResposta.getDate() + 3);
+              break;
+            case 2:
+              console.log("entrei acerto 2");
+              varDataAux = dataResposta.getDate();
+              dataResposta.setDate(dataResposta.getDate() + 3);
+              break;
+            case 3:
+              console.log("entrei acerto 3");
+              varDataAux = dataResposta.getDate();
+              dataResposta.setDate(dataResposta.getDate() + 7);
+              break;
+            case 4:
+              console.log("entrei acerto 4");
+              varDataAux = dataResposta.getDate();
+              dataResposta.setDate(dataResposta.getDate() + 14);
+              break;
+          }
+        }
+      }
+      console.log(varDataAux);
+      console.log(dataResposta);
       db.query(
         updateQuery,
         [dataResposta, nota, usuarioId, cardId],
@@ -643,8 +709,6 @@ app.post("/api/flashcard/respondeCard", (req, res) => {
         }
       );
     } else {
-      console.log("rows");
-      console.log(rows);
       // Se a combinação de caixaId, usuarioId e cardId não existe, execute o INSERT
       db.query(
         insertQuery,

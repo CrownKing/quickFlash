@@ -83,7 +83,7 @@ function BuscarBaralho() {
     }
   };
   useEffect(() => {
-    Axios.get("http://localhost:3001/api/baralhos/getBaralhos").then(
+    Axios.get("http://localhost:3001/api/baralhos/getBaralhosCompartilhados").then(
       (response) => {
         const baralhos = response.data.map((baralho) => ({
           ...baralho, //set5tando uma variavel curtido no baralho apenas para exibir o coração cheio ou nao no front

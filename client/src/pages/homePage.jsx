@@ -25,6 +25,7 @@ function HomePage() {
 
   const closeModal = () => {
     setCriaBaralhoClickado(false);
+    getUserData();
   };
   const dislike = (baralhoId, criadorId) => {
     var data = localStorage.getItem("loginData");
@@ -33,12 +34,16 @@ function HomePage() {
       Axios.post("http://localhost:3001/api/baralhos/deslikeBaralho", {
         usuarioId: data[0].usuarioId,
         baralhoId: baralhoId,
-      }).then((response) => {});
+      }).then((response) => {
+        getUserData()
+      });
     } else {
       Axios.delete(
         `http://localhost:3001/api/baralhos/deleteBaralho/${baralhoId}`,
         {}
-      ).then((response) => {});
+      ).then((response) => {
+        getUserData()
+      });
     }
   };
 
@@ -160,11 +165,11 @@ function HomePage() {
                 </div>
                 <div
                   className="deckName"
-                  onClick={() =>
-                    selecionaBaralho(deck.baralhoId, deck.baralhoNome, deck)
-                  }
+                  
                 >
-                  <div>
+                  <div onClick={() =>
+                    selecionaBaralho(deck.baralhoId, deck.baralhoNome, deck)
+                  }>
                     <span>{deck.baralhoNome}</span>
                   </div>
                   <div
@@ -174,6 +179,7 @@ function HomePage() {
                     }}
                   >
                     <button
+                    onClick={() => dislike(deck.baralhoId, deck.criadorId)}
                       style={{
                         border: "none",
                         backgroundColor: "transparent",

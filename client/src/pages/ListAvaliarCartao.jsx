@@ -7,19 +7,38 @@ import AvaliarCardModal from "../components/avaliarCard";
 
 function ListAvaliarCartaoPage() {
   const [listaSolicitacoes, setSolicitacoes] = useState([]);
+  const [listaAvaliados, setAvaliados] = useState([]);
   const [listaCartoesParaAvaliar, setAvaliacoes] = useState([]);
   const [showModalCard, setShowModalCard] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
 
   useEffect(() => {
     if (listaSolicitacoes.length > 0) {
-      const cardIdsArray = listaSolicitacoes.map((x) => x.cardId);
-      Axios.post(
-        "http://localhost:3001/api/cards/selecionaCardsParaAvaliacao",
-        { cardIdsArray: cardIdsArray }
-      ).then((response) => {
-        setAvaliacoes(response.data);
-      });
+      var data = JSON.parse(localStorage.getItem("loginData"));
+      if (data[0].monitor === 1) {
+        const cardIdsArray = listaSolicitacoes.map((x) => x.cardId);
+        Axios.post(
+          "http://localhost:3001/api/cards/selecionaCardsParaAvaliacao",
+          { cardIdsArray: cardIdsArray }
+        ).then((response) => {
+          setAvaliacoes(response.data);
+        });
+      } else {
+        const cardIdsArray = listaSolicitacoes.map((x) => x.cardId);
+        Axios.post(
+          "http://localhost:3001/api/cards/selecionaCardsParaAvaliacao",
+          { cardIdsArray: cardIdsArray }
+        ).then((response) => {
+          setAvaliacoes(response.data);
+          Axios.post(
+            "http://localhost:3001/api/cards/selecionaCardsAvaliados",
+            { usuarioId: data[0].usuarioId }
+          ).then((response) => {
+            console.log(response.data);
+            setAvaliados(response.data);
+          });
+        });
+      }
     }
   }, [listaSolicitacoes]);
 

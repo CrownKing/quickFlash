@@ -24,10 +24,6 @@ function Header({ onCartoesAvaliarChange }) {
   };
 
   useEffect(() => {
-    var data = JSON.parse(localStorage.getItem("loginData"));
-    setUserdata(data[0]);
-    const rotaAtual = location.pathname;
-
     const fetchData = () => {
       var data = JSON.parse(localStorage.getItem("loginData"));
       if (data[0].monitor === 1) {
@@ -44,13 +40,32 @@ function Header({ onCartoesAvaliarChange }) {
               error
             );
           });
+      } else {
+        Axios.get(
+          `http://localhost:3001/api/login/monitor/getCardsSolicitados/Aluno/${data[0].usuarioId}`
+        )
+          .then((response) => {
+            setCartoesParaAvaliar(response.data.length);
+            onCartoesAvaliarChange(response.data);
+          })
+          .catch((error) => {
+            console.error(
+              "Erro ao fazer a solicitação para o servidor:",
+              error
+            );
+          });
       }
     };
 
-    const intervalId = setInterval(fetchData, 100);
+    // Chamada inicial
+    fetchData();
 
+    // Intervalo de 5 segundos
+    const intervalId = setInterval(fetchData, 5000);
+
+    // Limpeza do intervalo ao desmontar o componente
     return () => clearInterval(intervalId);
-  }, [location.pathname]);
+  }, [location.pathname, onCartoesAvaliarChange]);
 
   const pageNavigator = () => {
     const paginaAtual = location.pathname;
@@ -113,10 +128,12 @@ function Header({ onCartoesAvaliarChange }) {
       </div>
       {/* Alerta */}
       {showAlert && (
-        <div>
-          <p>Tem certeza que deseja retornar ao login?</p>
-          <button onClick={handleAlertConfirm}>Sim</button>
-          <button onClick={handleAlertNegate}>Nao</button>
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <p>Tem certeza que deseja retornar ao login?</p>
+            <button onClick={handleAlertConfirm}>Sim</button>
+            <button onClick={handleAlertNegate}>Não</button>
+          </div>
         </div>
       )}
     </div>

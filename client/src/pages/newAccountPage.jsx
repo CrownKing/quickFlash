@@ -17,7 +17,6 @@ function NewAccountPage() {
 const createCadastro = () => {
 if(usuarioSenha === usuarioConfirmaSenha){
  Axios.post('http://localhost:3001/user', {usuarioNome: usuarioNome, usuarioEmail: usuarioEmail , usuarioSenha: usuarioSenha}).then(()=>{
-   alert('deu bom')
  })
 }
 else
