@@ -9,6 +9,7 @@ import Header from "../components/header";
 import { useNavigate } from "react-router-dom";
 import Axios from "axios";
 import { useLocation } from "react-router-dom";
+import emailjs from '@emailjs/browser'
 
 function CardsPage() {
   const [cardsBaralho, setBaralho] = useState([]);
@@ -18,6 +19,18 @@ function CardsPage() {
   const [redirectToFlashcard, setRedirect] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  
+  const [serviceID] = useState("service_8hzm91f");
+  const [templateID] = useState("template_d25m2cn");
+  const [publicKey] = useState("3KTRGr3FH4GxPExUC");
+  const [templateParams, setTemplateParams] = useState({
+    from_name: "QuickFlash",
+    from_email: "",
+    to_name: "",
+    reply_to:"jonathanljs0@gmail.com",
+    message:
+      "Não se esqueça de que você possui alguns cartões para responder no dia:",
+  });
 
   // get userId
   let baralhoNome = location.state.baralhoNome;
@@ -38,6 +51,49 @@ function CardsPage() {
         setCriacao(true);
       }
     });
+    Axios.get(
+      `http://localhost:3001/api/usuarioflashcard/getMenorDataProximaResposta/${data[0].usuarioId}`
+    )
+      .then((response) => {
+        console.log(response.data);
+        let nome = data[0].nome
+        let email =data[0].email
+        let newMessage = "";
+        if (response.data[0].dataProximaResposta === null) {
+          newMessage =
+            "Não se esqueça que você tem cartões para responder hoje.";
+        } else {
+          const date = response.data[0].dataProximaResposta;
+          const dataObj = new Date(date);
+          const dia = String(dataObj.getDate()).padStart(2, "0");
+          const mes = String(dataObj.getMonth() + 1).padStart(2, "0");
+          const ano = dataObj.getFullYear();
+          const dataFormatada = `${dia}/${mes}/${ano}`;
+          newMessage =
+            "Não se esqueça que você tem cartões para responder no dia " +
+            dataFormatada;
+        }
+        debugger
+        setTemplateParams((prevParams) => ({
+          ...prevParams,
+          message: newMessage,
+          // reply_to: email,
+          to_name: nome,
+        }));
+        
+        setTimeout(() => {
+          emailjs.send(serviceID, templateID, templateParams, publicKey)
+            .then((response) => {
+              console.log('Email enviado com sucesso!', response.status, response.text);
+            })
+            .catch((error) => {
+              console.error('Erro ao enviar o email:', error);
+            });
+        }, 2000);
+      })
+      .catch((error) => {
+        console.error("Erro ao fazer a solicitação para o servidor:", error);
+      });
   }, []);
 
   const criaCartao = () => {

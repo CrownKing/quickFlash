@@ -628,11 +628,8 @@ app.post("/api/flashcard/respondeCard", (req, res) => {
     }
     if (rows && rows.length > 0) {
       // Se a combinação de caixaId, usuarioId e cardId já existe, execute o UPDATE
-      console.log(nota);
-      console.log(rows[0]);
       if (nota == 1 || nota == 2) {
         if (rows[0].caixaId === 1) {
-          console.log("entrei erro 0");
           caixaId = rows[0].caixaId;
           varDataAux = dataResposta.getDate();
           dataResposta.setDate(dataResposta.getDate() + 1);
@@ -640,31 +637,30 @@ app.post("/api/flashcard/respondeCard", (req, res) => {
           caixaId = rows[0].caixaId - 1;
           switch (caixaId) {
             case null:
-              console.log("entrei erro 1");
               varDataAux = dataResposta.getDate();
               dataResposta.setDate(dataResposta.getDate() + 1);
               break;
             case 1:
-              console.log("entrei erro 2");
               varDataAux = dataResposta.getDate();
               dataResposta.setDate(dataResposta.getDate() + 1);
               break;
             case 2:
-              console.log("entrei erro 3");
               varDataAux = dataResposta.getDate();
               dataResposta.setDate(dataResposta.getDate() + 3);
               break;
             case 3:
-              console.log("entrei erro 4");
               varDataAux = dataResposta.getDate();
-              dataResposta.setDate(dataResposta.getDate() + 7);
+              dataResposta.setDate(dataResposta.getDate() + 5);
               break;
+              case 4:
+                varDataAux = dataResposta.getDate();
+                dataResposta.setDate(dataResposta.getDate() + 7);
+                break;
           }
         }
       } else {
         //nota 3 ou 4
-        if (rows[0].caixaId === 4) {
-          console.log("entrei acerto 0");
+        if (rows[0].caixaId === 5) {
           caixaId = rows[0].caixaId;
           varDataAux = dataResposta.getDate();
           dataResposta.setDate(dataResposta.getDate() + 14);
@@ -672,33 +668,31 @@ app.post("/api/flashcard/respondeCard", (req, res) => {
           caixaId = rows[0].caixaId + 1;
           switch (caixaId) {
             case null:
-              console.log("entrei acerto 1");
               varDataAux = dataResposta.getDate();
               dataResposta.setDate(dataResposta.getDate() + 3);
               break;
             case 2:
-              console.log("entrei acerto 2");
               varDataAux = dataResposta.getDate();
               dataResposta.setDate(dataResposta.getDate() + 3);
               break;
             case 3:
-              console.log("entrei acerto 3");
+              varDataAux = dataResposta.getDate();
+              dataResposta.setDate(dataResposta.getDate() + 5);
+              break;
+            case 4:
               varDataAux = dataResposta.getDate();
               dataResposta.setDate(dataResposta.getDate() + 7);
               break;
-            case 4:
-              console.log("entrei acerto 4");
-              varDataAux = dataResposta.getDate();
-              dataResposta.setDate(dataResposta.getDate() + 14);
-              break;
+              case 5:
+                varDataAux = dataResposta.getDate();
+                dataResposta.setDate(dataResposta.getDate() + 14);
+                break;
           }
         }
       }
-      console.log(varDataAux);
-      console.log(dataResposta);
       db.query(
         updateQuery,
-        [dataResposta, nota, usuarioId, cardId],
+        [dataResposta, caixaId, usuarioId, cardId],
         (err, result) => {
           if (err) {
             console.log(err);
@@ -730,6 +724,24 @@ app.get("/api/login/monitor/getCardsSolicitados/:id", (req, res) => {
   // requisição que busca todos os cards enviados para avaliação
   const usuarioId = req.params.id; // metodo de pegar um parametro pelo link da requisição
   const sqlGet = "SELECT * FROM usuarioavaliaflashcard WHERE avaliadorId = ?";
+  db.query(sqlGet, [usuarioId], (err, result) => {
+    if (err) {
+      console.error("Erro ao executar a consulta SQL:", err);
+      res.status(500).send("Erro interno do servidor");
+      return;
+    }
+    res.send(result);
+  });
+});
+
+app.get("/api/usuarioflashcard/getMenorDataProximaResposta/:id", (req, res) => {
+  const usuarioId = req.params.id; // Pega o id do usuário a partir da URL
+  const sqlGet = `
+    SELECT * 
+    FROM usuarioflashcard 
+    WHERE usuarioId = ? 
+    ORDER BY dataProximaResposta ASC 
+    LIMIT 1`; // Ordena pela menor dataProximaResposta e limita a um resultado
   db.query(sqlGet, [usuarioId], (err, result) => {
     if (err) {
       console.error("Erro ao executar a consulta SQL:", err);

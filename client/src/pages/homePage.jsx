@@ -16,8 +16,8 @@ function HomePage() {
   const [showCriaBaralho, setShowCriaBaralho] = useState(true);
   const [userData, setUserData] = useState({});
   const [criaBralhoClickado, setCriaBaralhoClickado] = useState(false);
-  const [showLoad, setLoad] = useState(true);
   const navigate = useNavigate();
+  const [showLoad, setLoad] = useState(true);
 
   useEffect(() => {
     getUserData();
@@ -35,14 +35,14 @@ function HomePage() {
         usuarioId: data[0].usuarioId,
         baralhoId: baralhoId,
       }).then((response) => {
-        getUserData()
+        getUserData();
       });
     } else {
       Axios.delete(
         `http://localhost:3001/api/baralhos/deleteBaralho/${baralhoId}`,
         {}
       ).then((response) => {
-        getUserData()
+        getUserData();
       });
     }
   };
@@ -71,24 +71,11 @@ function HomePage() {
           ).then((response) => {
             response.data.map((x) => getBaralhosAux.push(x));
             setBaralho(getBaralhosAux);
-            let qntBaralho = getBaralhosAux.length;
-            if (qntBaralho >= 3) {
-              setShowCriaBaralho(false);
-              setTimeout(() => setLoad(false), 1000);
-            } else {
-              setShowCriaBaralho(true);
-              setTimeout(() => setLoad(false), 1000);
-            }
+            setTimeout(() => setLoad(false), 1000);
           });
         } else {
           setBaralho(getBaralhosAux);
-          if (getBaralhosAux.length >= 3) {
-            setShowCriaBaralho(false);
-            setTimeout(() => setLoad(false), 1000);
-          } else {
-            setShowCriaBaralho(true);
-            setTimeout(() => setLoad(false), 1000);
-          }
+          setTimeout(() => setLoad(false), 1000);
         }
       });
     });
@@ -163,13 +150,12 @@ function HomePage() {
                     <img src={deckPhoto} alt="Logo" />
                   </div>
                 </div>
-                <div
-                  className="deckName"
-                  
-                >
-                  <div onClick={() =>
-                    selecionaBaralho(deck.baralhoId, deck.baralhoNome, deck)
-                  }>
+                <div className="deckName">
+                  <div
+                    onClick={() =>
+                      selecionaBaralho(deck.baralhoId, deck.baralhoNome, deck)
+                    }
+                  >
                     <span>{deck.baralhoNome}</span>
                   </div>
                   <div
@@ -179,7 +165,7 @@ function HomePage() {
                     }}
                   >
                     <button
-                    onClick={() => dislike(deck.baralhoId, deck.criadorId)}
+                      onClick={() => dislike(deck.baralhoId, deck.criadorId)}
                       style={{
                         border: "none",
                         backgroundColor: "transparent",
