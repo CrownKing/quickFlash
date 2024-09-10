@@ -27,7 +27,7 @@ function CardsPage() {
     from_name: "QuickFlash",
     from_email: "",
     to_name: "",
-    reply_to:"jonathanljs0@gmail.com",
+    reply_to:"",
     message:
       "Não se esqueça de que você possui alguns cartões para responder no dia:",
   });
